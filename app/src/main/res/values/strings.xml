@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AndroidCovoiturage</string>
+    <string name="title_activity_fous_du_volant">Map</string>
+</resources>
