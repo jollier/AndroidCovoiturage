@@ -39,8 +39,10 @@ public class FousDuVolant extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(43.5432556,1.5100196);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng BL = new LatLng(43.5432556,1.5100196);
+        mMap.addMarker(new MarkerOptions().position(BL).title("Marker Berger-Levrault"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(BL));
+
+
     }
 }
