@@ -40,3 +40,5 @@ proguard/
 # Android Studio Navigation editor temp files
 .navigation/
 
+#Pour ne pas remettre à jour le google maps_api_pour la clé
+/app/src/debug/res/values
