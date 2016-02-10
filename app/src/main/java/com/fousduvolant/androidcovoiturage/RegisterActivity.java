@@ -24,7 +24,6 @@ public class RegisterActivity extends Activity {
                 //Intent intent = new Intent(RegisterActivity.this, LoginDisplayActivity.class);
                 //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
                 //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
-
                 //startActivity(intent);
                 finish();
             }
