@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_connecter"
+            android:icon="@drawable/ic_add_24dp"
+            android:title="Se connecter" />
+        <item
+            android:id="@+id/nav_inscrire"
+            android:icon="@drawable/ic_create_24dp"
+            android:title="S'inscrire" />
+    </group>
+
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/nav_close"
+                android:icon="@drawable/ic_close_24dp"
+                android:title="Quitter" />
+        </menu>
+    </item>
+
+</menu>

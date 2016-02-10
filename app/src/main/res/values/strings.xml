@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">AndroidCovoiturage</string>
-    <string name="title_activity_fous_du_volant">Map</string>
+    <string name="title_activity_fous_du_volant">Les fous du volant</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Paramètres</string>
 </resources>
