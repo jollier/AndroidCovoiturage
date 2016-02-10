@@ -277,7 +277,7 @@
     <!-- Boutons Enregistrer/Annuler -->
     <Button
         android:layout_marginLeft="20dp"
-        android:layout_width="120"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:text="Enregistrer"
         android:id="@+id/buttonEnregistrer"
@@ -285,7 +285,7 @@
         style="@style/btnStyleSeagull"/>
 
     <Button
-        android:layout_width="120"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:text="Annuler"
         android:id="@+id/buttonAnnuler"
