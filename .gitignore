@@ -1,4 +1,4 @@
-/app/src/debug/res/values/google_maps_api.xml
+app/src/debug/res/values/google_maps_api.xml
 *.iml
 
 # Gradle files
@@ -20,8 +20,6 @@
 # Built application files
 *.apk
 *.ap_
-/.idea/misc.xml
-/.idea/gradle.xml
 
 # Files for the Dalvik VM
 *.dex
