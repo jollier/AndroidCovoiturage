@@ -1,0 +1,7 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item name="ic_add_24dp" type="drawable">@drawable/ic_add_24dp</item>
+    <item name="ic_create_24dp" type="drawable">@drawable/ic_create_24dp</item>
+    <item name="ic_close_24dp" type="drawable">@drawable/ic_close_24dp</item>
+
+</resources>
