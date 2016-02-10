@@ -7,6 +7,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -42,7 +43,11 @@ public class FousDuVolant extends FragmentActivity implements OnMapReadyCallback
         LatLng BL = new LatLng(43.5432556,1.5100196);
         mMap.addMarker(new MarkerOptions().position(BL).title("Marker Berger-Levrault"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(BL));
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
+        CameraPosition cameraPosition = new CameraPosition.Builder() .
+                target(BL).tilt(45).zoom(15).bearing(0).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
     }
 }

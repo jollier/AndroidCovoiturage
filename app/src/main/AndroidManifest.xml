@@ -29,14 +29,22 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".FousDuVolant"
-            android:label="@string/title_activity_fous_du_volant">
+            android:name=".LoginDisplayActivity"
+            android:label="@string/title_activity_login_display">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".FousDuVolant"
+            android:label="@string/title_activity_fous_du_volant">
+
+        </activity>
+
+
     </application>
 
 </manifest>
