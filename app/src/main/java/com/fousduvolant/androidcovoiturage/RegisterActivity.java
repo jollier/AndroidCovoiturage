@@ -21,11 +21,12 @@ public class RegisterActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(RegisterActivity.this, LoginDisplayActivity.class);
+                //Intent intent = new Intent(RegisterActivity.this, LoginDisplayActivity.class);
                 //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
                 //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
 
-                startActivity(intent);
+                //startActivity(intent);
+                finish();
             }
         });
     }

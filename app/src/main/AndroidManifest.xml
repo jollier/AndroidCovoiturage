@@ -29,8 +29,16 @@
             android:value="@string/google_maps_key" />
 
         <activity
+
             android:name=".LoginDisplayActivity"
             android:label="@string/title_activity_login_display">
+        </activity>
+
+        <activity
+            android:name=".FousDuVolant"
+            android:label="@string/title_activity_fous_du_volant"
+            android:theme="@style/AppTheme.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,15 +47,16 @@
         </activity>
 
         <activity
-            android:name=".FousDuVolant"
-            android:label="@string/title_activity_fous_du_volant">
-
-        </activity>
-        <activity
             android:name=".RegisterActivity"
             android:label="@string/title_activity_fous_du_volant">
 
         </activity>
+
+        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
     </application>
 

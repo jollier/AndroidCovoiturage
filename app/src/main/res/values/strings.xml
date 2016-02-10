@@ -1,7 +1,14 @@
 <resources>
+
     <string name="app_name">Android Covoiturage</string>
     <string name="title_activity_fous_du_volant">Les Fous du Volant</string>
 
     <string name="title_activity_login_display">LoginDisplayActivity</string>
     <string name="create_account">Créer un compte</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Paramètres</string>
+
 </resources>
