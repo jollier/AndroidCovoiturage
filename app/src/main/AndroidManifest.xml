@@ -43,7 +43,11 @@
             android:label="@string/title_activity_fous_du_volant">
 
         </activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:label="@string/title_activity_fous_du_volant">
 
+        </activity>
 
     </application>
 

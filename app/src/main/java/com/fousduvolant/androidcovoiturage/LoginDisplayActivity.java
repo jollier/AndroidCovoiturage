@@ -28,6 +28,19 @@ public class LoginDisplayActivity extends Activity{
             passwordDisplay.setText(intent.getStringExtra(EXTRA_PASSWORD));
         }
 
+        final Button registerButton = (Button) findViewById(R.id.create_account);
+        registerButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginDisplayActivity.this, RegisterActivity.class);
+                //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
+                //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
+
+                startActivity(intent);
+            }
+        });
+
         final Button loginButton = (Button) findViewById(R.id.button_Connexion);
         loginButton.setOnClickListener(new View.OnClickListener() {
 
