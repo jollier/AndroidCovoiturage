@@ -9,16 +9,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import javax.net.ssl.HttpsURLConnection;
 
 import model.User;
 import service.InputStreamOperations;
@@ -65,9 +70,9 @@ public class LoginDisplayActivity extends Activity{
             @Override
             public void onClick(View v) {
                 //User user = getUser();
-//                ConnexionFiles connect = new ConnexionFiles();
-//                connect.execute();
-                new ConnexionFiles().execute();
+                ConnexionFiles connect = new ConnexionFiles();
+                connect.execute();
+
 
                 //Intent intent = new Intent(LoginDisplayActivity.this, TestDatabaseActivity.class);
                 //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
@@ -92,9 +97,6 @@ public class LoginDisplayActivity extends Activity{
         });
     }
 
-
-
-
     /**
      * Récupère un objet user.
      * @author François http://www.francoiscolin.fr/
@@ -107,6 +109,7 @@ public class LoginDisplayActivity extends Activity{
                 myurl= "http://lesfousduvolant.cloudapp.net/Covoiturage/LoginAndroid";
 
                 try {
+
                     URL url = new URL(myurl);
 
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -128,7 +131,7 @@ public class LoginDisplayActivity extends Activity{
                     sb.append(URLEncoder.encode("email","UTF-8"));
                     sb.append("=");
                     sb.append(URLEncoder.encode("julien.ollier@berger-levrault.fr","UTF-8"));
-                    sb.append(URLEncoder.encode("&","UTF-8"));
+                    sb.append("&");
                     sb.append(URLEncoder.encode("pwd1","UTF-8"));
                     sb.append("=");
                     sb.append(URLEncoder.encode("Azerty12","UTF-8"));
@@ -162,10 +165,10 @@ public class LoginDisplayActivity extends Activity{
                     JSONObject jsonObject = new JSONObject(result);
 
                     // On récupère un objet JSON du tableau
-                    JSONObject obj = new JSONObject(jsonObject.getString("user"));
+                    //JSONObject obj = new JSONObject(jsonObject.getString("user"));
 
-                    user.setEmail(obj.getString("email"));
-                    user.setPassword(obj.getString("password"));
+                    user.setEmail(jsonObject.getString("email"));
+
 
 
                 } catch (Exception e) {
