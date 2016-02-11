@@ -65,9 +65,9 @@ public class LoginDisplayActivity extends Activity{
             @Override
             public void onClick(View v) {
                 //User user = getUser();
-                ConnexionFiles connect = new ConnexionFiles();
-                connect.execute();
-
+//                ConnexionFiles connect = new ConnexionFiles();
+//                connect.execute();
+                new ConnexionFiles().execute();
 
                 //Intent intent = new Intent(LoginDisplayActivity.this, TestDatabaseActivity.class);
                 //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
@@ -92,6 +92,9 @@ public class LoginDisplayActivity extends Activity{
         });
     }
 
+
+
+
     /**
      * Récupère un objet user.
      * @author François http://www.francoiscolin.fr/
@@ -104,7 +107,6 @@ public class LoginDisplayActivity extends Activity{
                 myurl= "http://lesfousduvolant.cloudapp.net/Covoiturage/LoginAndroid";
 
                 try {
-
                     URL url = new URL(myurl);
 
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
