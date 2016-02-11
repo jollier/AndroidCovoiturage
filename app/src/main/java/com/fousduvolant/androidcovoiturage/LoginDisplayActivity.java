@@ -132,7 +132,7 @@ public class LoginDisplayActivity extends Activity{
                     sb.append(URLEncoder.encode("email","UTF-8"));
                     sb.append("=");
                     sb.append(URLEncoder.encode("julien.ollier@berger-levrault.fr","UTF-8"));
-                    sb.append(URLEncoder.encode("&","UTF-8"));
+                    sb.append("&");
                     sb.append(URLEncoder.encode("pwd1","UTF-8"));
                     sb.append("=");
                     sb.append(URLEncoder.encode("Azerty12","UTF-8"));
@@ -166,10 +166,10 @@ public class LoginDisplayActivity extends Activity{
                     JSONObject jsonObject = new JSONObject(result);
 
                     // On récupère un objet JSON du tableau
-                    JSONObject obj = new JSONObject(jsonObject.getString("user"));
+                    //JSONObject obj = new JSONObject(jsonObject.getString("user"));
 
-                    user.setEmail(obj.getString("email"));
-                    user.setPassword(obj.getString("password"));
+                    user.setEmail(jsonObject.getString("email"));
+
 
 
                 } catch (Exception e) {
