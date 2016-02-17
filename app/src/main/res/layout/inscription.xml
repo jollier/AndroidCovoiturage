@@ -14,7 +14,7 @@
         android:id="@+id/textView2"
         android:layout_row="12"
         android:layout_column="0"
-        android:layout_columnSpan="4"/>
+        android:layout_columnSpan="2"/>
 
     <!-- Adresse Email -->
     <TextView
@@ -30,7 +30,7 @@
         android:layout_width="438dp"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:id="@+id/EditTextEmail"
+        android:id="@+id/email"
         android:layout_row="17"
         android:layout_column="1"/>
     <!-- Mot de passe  -->
@@ -47,7 +47,7 @@
         android:layout_width="438dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:id="@+id/EditTextPwd"
+        android:id="@+id/password"
         android:layout_row="19"
         android:layout_column="1" />
 
@@ -65,7 +65,7 @@
         android:layout_width="438dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:id="@+id/EditTextPwd2"
+        android:id="@+id/Pwd2"
         android:layout_row="21"
         android:layout_column="1" />
 
@@ -83,7 +83,7 @@
         android:layout_width="438dp"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:id="@+id/EditTextFirstName"
+        android:id="@+id/firstName"
         android:layout_row="23"
         android:layout_column="1"/>
 
@@ -102,7 +102,7 @@
         android:layout_width="438dp"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:id="@+id/EditTextLastName"
+        android:id="@+id/lastName"
         android:layout_row="25"
         android:layout_column="1"/>
 
@@ -111,8 +111,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="N°Rue/Rue"
-        android:id="@+id/textNumber"
+        android:text="N°Rue"
+        android:id="@+id/textaddressNumber"
         android:layout_row="27"
         android:layout_column="0" />
 
@@ -120,43 +120,60 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:id="@+id/EditTextNumber"
+        android:id="@+id/addressNumber"
         android:layout_row="27"
         android:layout_column="1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Rue"
+        android:id="@+id/textStreet"
+        android:layout_row="29"
+        android:layout_column="0" />
 
     <EditText
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:id="@+id/EditTextStreet"
-        android:layout_row="27"
-        android:layout_column="2" />
+        android:id="@+id/addressWay"
+        android:layout_row="29"/>
 
     <!-- Code Postal/Ville -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Code postal/Ville"
+        android:text="Code postal"
         android:id="@+id/textCP"
-        android:layout_row="29"
+        android:layout_row="31"
         android:layout_column="0" />
 
     <EditText
         android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:id="@+id/EditTextCP"
-        android:layout_row="29"
+        android:id="@+id/addressCP"
+        android:layout_row="31"
         android:layout_column="1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Ville"
+        android:id="@+id/textCity"
+        android:layout_row="33"
+        android:layout_column="0" />
 
     <EditText
         android:layout_width="313dp"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:id="@+id/EditTextTown"
-        android:layout_row="29"
-        android:layout_column="2" />
+        android:id="@+id/addressCity"
+        android:layout_row="33"
+        android:layout_column="1" />
 
     <!-- Telephone -->
     <TextView
@@ -165,17 +182,17 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Téléphone *"
         android:id="@+id/textPhone"
-        android:layout_row="31"
+        android:layout_row="35"
         android:layout_column="0" />
 
     <EditText
         android:layout_width="258dp"
         android:layout_height="wrap_content"
         android:inputType="phone"
-        android:id="@+id/EditTextPhone"
-        android:layout_row="31"
+        android:id="@+id/phoneNumber"
+        android:layout_row="35"
         android:layout_column="1"
-        android:layout_columnSpan="3" />
+        android:layout_columnSpan="1" />
 
     <!-- Sexe -->
     <TextView
@@ -184,18 +201,23 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Sexe"
         android:id="@+id/textSexe"
-        android:layout_row="33"/>
+        android:layout_column="0"
+        android:layout_row="37"
+        android:nestedScrollingEnabled="false" />
 
     <RadioGroup
+        android:id="@+id/sexe"
         android:layout_width="257dp"
         android:layout_height="wrap_content"
-        android:layout_row="33">
+        android:layout_column="1"
+        android:layout_row="37">
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Homme"
-            android:id="@+id/sexeH" />
+            android:id="@+id/sexeH"
+            android:nestedScrollingEnabled="false" />
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -210,13 +232,15 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Fumeur"
-        android:id="@+id/textFumeur"
-        android:layout_row="34"/>
+        android:id="@+id/smoker"
+        android:layout_column="0"
+        android:layout_row="39"/>
 
     <RadioGroup
         android:layout_width="257dp"
         android:layout_height="wrap_content"
-        android:layout_row="34">
+        android:layout_column="1"
+        android:layout_row="39">
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -237,19 +261,21 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Conducteur"
-        android:id="@+id/textDriver"
-        android:layout_row="35"/>
+        android:id="@+id/driver"
+        android:layout_column="0"
+        android:layout_row="41"/>
 
     <RadioGroup
         android:layout_width="257dp"
         android:layout_height="wrap_content"
-        android:layout_row="35">
+        android:layout_column="1"
+        android:layout_row="41">
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Oui"
-            android:id="@+id/DriverY" />
+            android:id="@+id/driverY" />
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -265,14 +291,16 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Rayon (en Km)"
         android:id="@+id/textRayon"
-        android:layout_row="36"/>
+        android:layout_column="0"
+        android:layout_row="43"/>
 
     <EditText
         android:layout_width="258dp"
         android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:id="@+id/EditTextRayon"
-        android:layout_row="36"/>
+        android:inputType="text"
+        android:id="@+id/area"
+        android:layout_column="1"
+        android:layout_row="43"/>
 
     <!-- Boutons Enregistrer/Annuler -->
     <Button
@@ -280,7 +308,8 @@
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:text="Enregistrer"
-        android:id="@+id/buttonEnregistrer"
+        android:id="@+id/registerButton"
+        android:layout_column="0"
         android:layout_row="54"
         style="@style/btnStyleSeagull"/>
 
