@@ -30,7 +30,7 @@
 
         <activity
 
-            android:name=".LoginDisplayActivity"
+            android:name=".LoginDisplayActivityAlex"
             android:label="@string/title_activity_login_display">
         </activity>
 

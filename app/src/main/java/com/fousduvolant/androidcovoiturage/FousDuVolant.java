@@ -132,7 +132,7 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_connecter) {
-            Intent intent = new Intent(FousDuVolant.this, LoginDisplayActivity.class);
+            Intent intent = new Intent(FousDuVolant.this, LoginDisplayActivityAlex.class);
             //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
             //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
 
