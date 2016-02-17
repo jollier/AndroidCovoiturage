@@ -5,7 +5,9 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,6 +25,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
 import javax.net.ssl.HttpsURLConnection;
 
 import model.User;
@@ -35,7 +42,8 @@ public class LoginDisplayActivity extends Activity{
     final String EXTRA_LOGIN = "user_login";
     final String EXTRA_PASSWORD = "user_password";
 
-
+    TextView loginDisplay;
+    TextView passwordDisplay;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,8 +51,8 @@ public class LoginDisplayActivity extends Activity{
         setContentView(R.layout.login_layout);
 
         Intent intent = getIntent();
-        TextView loginDisplay = (TextView) findViewById(R.id.email);
-        TextView passwordDisplay = (TextView) findViewById(R.id.password);
+        loginDisplay = (TextView) findViewById(R.id.email);
+        passwordDisplay = (TextView) findViewById(R.id.password);
 
         if (intent != null) {
             loginDisplay.setText(intent.getStringExtra(EXTRA_LOGIN));
@@ -70,9 +78,33 @@ public class LoginDisplayActivity extends Activity{
             @Override
             public void onClick(View v) {
                 //User user = getUser();
-                ConnexionFiles connect = new ConnexionFiles();
-                connect.execute();
+                ContentValues values = new ContentValues();
+                //values.put("email", "julien.ollier@berger-levrault.fr");
+                //values.put("pwd1", "Azerty12");
+                values.put("email", loginDisplay.getText().toString());
+                values.put("pwd1", passwordDisplay.getText().toString());
 
+                User user = new User();
+                user = null;
+
+                try {
+                    user = new ConnexionFiles().execute(values).get();
+                    //user = connect.execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                Toast toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                toast.setDuration(Toast.LENGTH_LONG);
+
+
+                if (user!=null) {
+                    Toast.makeText(getApplicationContext(), "Le login est correct", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Le login est incorrect", Toast.LENGTH_LONG).show();
+                }
 
                 //Intent intent = new Intent(LoginDisplayActivity.this, TestDatabaseActivity.class);
                 //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
@@ -102,8 +134,8 @@ public class LoginDisplayActivity extends Activity{
      * @author François http://www.francoiscolin.fr/
      */
     //public static User getUser() {
-        private class ConnexionFiles extends AsyncTask<Void, Integer, Long> {
-            protected Long doInBackground(Void... arg0) {
+        public static class ConnexionFiles extends AsyncTask<ContentValues, Integer, User> {
+            public User doInBackground(ContentValues... cValues) {
                 User user = new User();
                 String myurl;
                 myurl= "http://lesfousduvolant.cloudapp.net/Covoiturage/LoginAndroid";
@@ -120,21 +152,35 @@ public class LoginDisplayActivity extends Activity{
                     conn.setDoOutput(true);
                     //conn.addRequestProperty();
 
-                    ContentValues values = new ContentValues();
+                    /*ContentValues values = new ContentValues();
                     values.put("email", "julien.ollier@berger-levrault.fr");
                     values.put("pwd1", "Azerty12");
+                    */
 
                     OutputStream os = conn.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(
                             new OutputStreamWriter(os, "UTF-8"));
+
                     StringBuilder sb = new StringBuilder();
-                    sb.append(URLEncoder.encode("email","UTF-8"));
-                    sb.append("=");
-                    sb.append(URLEncoder.encode("julien.ollier@berger-levrault.fr","UTF-8"));
-                    sb.append("&");
-                    sb.append(URLEncoder.encode("pwd1","UTF-8"));
-                    sb.append("=");
-                    sb.append(URLEncoder.encode("Azerty12","UTF-8"));
+
+                    ContentValues cValue = cValues[0];
+
+                    Set<Map.Entry<String, Object>> s=cValue.valueSet();
+                    Iterator itr = s.iterator();
+                    int i=0;
+                    while(itr.hasNext())
+                    {
+                        if (i>0) {
+                            sb.append("&");
+                        }
+                        i++;
+                        Map.Entry me = (Map.Entry)itr.next();
+                        String key = me.getKey().toString();
+                        String value =  me.getValue().toString();
+
+                        sb.append(URLEncoder.encode(key,"UTF-8")+"="+URLEncoder.encode(value,"UTF-8"));
+                    }
+
                     writer.write(sb.toString());
                     writer.flush();
                     writer.close();
@@ -142,14 +188,13 @@ public class LoginDisplayActivity extends Activity{
 
                     conn.connect();
 
-
-                    Log.e("","Affichage du sb : " + sb.toString());
                     int responseCode = conn.getResponseCode();
                     String responseMessage = conn.getResponseMessage();
 
                     InputStream is = null;
-                    if (responseCode >= 400) {
+                    if (responseCode != 200) {
                         is = conn.getErrorStream();
+                        user = null;
                     } else {
                         is = conn.getInputStream();
                     }
@@ -159,24 +204,37 @@ public class LoginDisplayActivity extends Activity{
              * Elle contient une méthode InputStreamToString.
              */
 
-                    String result = InputStreamOperations.InputStreamToString(is);
+                        /*
+                         * InputStreamOperations est une classe complémentaire:
+                         * Elle contient une méthode InputStreamToString.
+                         */
+                        String result = InputStreamOperations.InputStreamToString(is);
 
-                    // On récupère le JSON complet
-                    JSONObject jsonObject = new JSONObject(result);
+                        // On récupère le JSON complet
+                        JSONObject jsonObject = new JSONObject(result);
 
-                    // On récupère un objet JSON du tableau
-                    //JSONObject obj = new JSONObject(jsonObject.getString("user"));
+                        // On récupère un objet JSON du tableau
+                        //JSONObject obj = new JSONObject(jsonObject.getString("user"));
 
-                    user.setEmail(jsonObject.getString("email"));
+                        user.setEmail(jsonObject.getString("email"));
 
-
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                // On retourne la liste des personnes
-                return null;
+                // On retourne le user ou null si le user ne remonte pas
+                return user;
             }
+        protected void onProgressUpdate(Integer... progress) {
+            //setProgressPercent(progress[0]);
+        }
+
+        protected void onPostExecute(User result) {
+            //showDialog("Downloaded " + result + " bytes");
+        }
+
+        }
     }
 }
 
