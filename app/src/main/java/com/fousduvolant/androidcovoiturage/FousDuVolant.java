@@ -230,6 +230,10 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
 
             startActivity(intent);
 
+        } else if (id == R.id.nav_listuseers) {
+            Intent intent = new Intent(FousDuVolant.this, ListUsersActivity.class);
+            startActivity(intent);
+
         } else if (id == R.id.nav_close) {
             // Fermer l'application
             finish();
