@@ -10,6 +10,11 @@
             android:id="@+id/nav_inscrire"
             android:icon="@drawable/ic_create_24dp"
             android:title="S'inscrire" />
+        <item
+            android:id="@+id/nav_listuseers"
+            android:icon="@drawable/ic_create_24dp"
+            android:title="Liste des Users" />
+
     </group>
 
     <item android:title="">
