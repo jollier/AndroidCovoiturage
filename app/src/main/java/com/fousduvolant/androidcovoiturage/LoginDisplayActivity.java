@@ -5,6 +5,8 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -47,6 +50,29 @@ public class LoginDisplayActivity extends Activity{
 
     TextView loginDisplay;
     TextView passwordDisplay;
+    User     receivedUser = null;
+
+    Handler handler = new Handler(new Handler.Callback() {
+
+        @Override
+        public boolean handleMessage(final Message msg) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    Log.d("EPITEZ", "handleMessage receivedUser setted" + msg.arg1);
+                    if (receivedUser == null) {
+                        Log.i("EPITEZ", "aucun utilisateur reçu");
+                        affichageToast(R.layout.toast_erreur, "Erreur : Utilisateur non trouvé ! ");
+                    } else {
+                        Log.i("EPITEZ", "reçu " + receivedUser.getEmail());
+                        affichageToast(R.layout.toast_valid,"Connexion réussie ! ");
+                        Intent intent = new Intent(LoginDisplayActivity.this, ListUsersActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
+            return false;
+        }
+    });
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,10 +108,10 @@ public class LoginDisplayActivity extends Activity{
             public void onClick(View v) {
 
                 // Test que les champs soient saisis
-                if (loginDisplay.getText().length()==0) {
+                if (loginDisplay.getText().length() == 0) {
                     loginDisplay.requestFocus();
                     loginDisplay.setError("Vous devez renseigner ce champs");
-                } else if (passwordDisplay.getText().length()==0) {
+                } else if (passwordDisplay.getText().length() == 0) {
                     passwordDisplay.requestFocus();
                     passwordDisplay.setError("Vous devez renseigner ce champs");
                 } else {
@@ -96,25 +122,9 @@ public class LoginDisplayActivity extends Activity{
                     values.put("email", loginDisplay.getText().toString());
                     values.put("pwd1", passwordDisplay.getText().toString());
 
-                    User user = new User();
-                    user = null;
-
-                    try {
-                        user = new ConnexionFiles().execute(values).get();
-                        //user = connect.execute().get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (user!=null) {
-                        affichageToast(R.layout.toast_valid,"Connexion réussie ! ");
-                        Intent intent = new Intent(LoginDisplayActivity.this, ListUsersActivity.class);
-                        startActivity(intent);
-                    } else {
-                        affichageToast(R.layout.toast_erreur,"Erreur : Utilisateur non trouvé ! ");
-                    }
+                    ConnexionFiles connexion;
+                    connexion = new ConnexionFiles(values);
+                    connexion.start();
 
                     //Intent intent = new Intent(LoginDisplayActivity.this, TestDatabaseActivity.class);
                     //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
@@ -140,28 +150,20 @@ public class LoginDisplayActivity extends Activity{
         });
     }
 
-    public void affichageToast(int numToast, String message) {
-        LayoutInflater inflater = getLayoutInflater();
-        View layout = inflater.inflate(numToast, (ViewGroup) findViewById(R.id.custom_toast_layout_id));
-
-        // set a message
-        TextView text = (TextView) layout.findViewById(R.id.text_toast);
-        text.setText(message);
-
-        Toast toast = new Toast(getApplicationContext());
-        //toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
-        toast.show();
-    }
 
     /**
      * Récupère un objet user.
      * @author François http://www.francoiscolin.fr/
      */
     //public static User getUser() {
-    public static class ConnexionFiles extends AsyncTask<ContentValues, Integer, User> {
-        public User doInBackground(ContentValues... cValues) {
+    public class ConnexionFiles extends Thread implements Runnable {
+        ContentValues [] cValues;
+        public ConnexionFiles(ContentValues ... values) {
+            cValues = values;
+        }
+
+        @Override
+        public void run() {
             User user = new User();
             String myurl;
             myurl= "http://lesfousduvolant.cloudapp.net/Covoiturage/LoginAndroid";
@@ -254,16 +256,26 @@ public class LoginDisplayActivity extends Activity{
                 e.printStackTrace();
             }
             // On retourne le user ou null si le user ne remonte pas
-            return user;
+            receivedUser = user;
+            Message msg = new Message();
+            handler.sendMessage(msg);
         }
-        protected void onProgressUpdate(Integer... progress) {
-            //setProgressPercent(progress[0]);
-        }
-
-        protected void onPostExecute(User result) {
-            //showDialog("Downloaded " + result + " bytes");
-        }
-
     }
+
+    public void affichageToast(int numToast, String message) {
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(numToast, (ViewGroup) findViewById(R.id.custom_toast_layout_id));
+
+        // set a message
+        TextView text = (TextView) layout.findViewById(R.id.text_toast);
+        text.setText(message);
+
+        Toast toast = new Toast(getApplicationContext());
+        //toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
+    }
+
 }
 
