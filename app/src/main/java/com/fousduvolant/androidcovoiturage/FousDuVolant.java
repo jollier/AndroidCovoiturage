@@ -1,6 +1,10 @@
 package com.fousduvolant.androidcovoiturage;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -14,7 +18,12 @@ import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,9 +35,29 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 public class FousDuVolant extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
-// , OnMapReadyCallback
+
+    private static final String editArrivee = "64 rue Jean Rostand, 31670 Labège";
+    private EditText txtAdresse;
+    private Spinner spinner;
+    private Button btnRechercher;
     private GoogleMap mMap;
+    ArrayList<LatLng> markerPoints;
+    Geocoder geocoder = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +66,6 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -56,10 +76,76 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
+        spinner = (Spinner) findViewById(R.id.rayon);
+        //Création d'une liste d'élément à mettre dans le Spinner(pour l'exemple)
+        List rayonList = new ArrayList();
+        rayonList.add("1");
+        rayonList.add("2");
+        rayonList.add("5");
+        rayonList.add("10");
+        rayonList.add("30");
+
+        // Le Spinner a besoin d'un adapter pour sa presentation alors on lui passe le context(this)
+        // et un fichier de presentation par défaut( android.R.layout.simple_spinner_item)
+        // avec la liste des elements (rayonList)
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, rayonList);
+
+        // On definit une présentation du spinner quand il est déroulé  (android.R.layout.simple_spinner_dropdown_item) */
+        adapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
+        //Enfin on passe l'adapter au Spinner et c'est tout
+        spinner.setAdapter(adapter);
+
+        // --- GOOGLE MAP ---
+
+        // Initializing
+        markerPoints = new ArrayList<LatLng>();
+        geocoder = new Geocoder(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        btnRechercher = (Button) findViewById(R.id.button);
+        btnRechercher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtAdresse =  (EditText) findViewById(R.id.editDepart);
+                if (txtAdresse.getText().length() == 0) {
+                    Toast.makeText(FousDuVolant.this, "Veuillez entrer une adresse", Toast.LENGTH_SHORT).show();
+                } else {
+                    try {
+                        // Ajout du marqueur de l'adresse saisie
+                        String adresse = txtAdresse.getText().toString();
+                        List<Address> addressList = geocoder.getFromLocationName(adresse, 5);
+                        Address location = addressList.get(0);
+                        location.getLatitude();
+                        location.getLongitude();
+
+                        LatLng adrLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        ajoutMarker(adrLatLng, txtAdresse.getText().toString());
+
+
+
+                        //FousDuVolant.this.startActivity(intent);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+    }
+
+
+    public void ajoutMarker(LatLng latLng, String nom) {
+        MarkerOptions marker = new MarkerOptions().position(latLng).title(nom);
+        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        mMap.addMarker(marker);
+
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                new LatLng(latLng.latitude, latLng.longitude)).zoom(11).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
     }
 
@@ -79,7 +165,6 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
         // Add a marker in Sydney and move the camera
         LatLng BL = new LatLng(43.5432556,1.5100196);
         mMap.addMarker(new MarkerOptions()
-
                 .position(BL)
                 .title("Berger-Levrault"));
 
