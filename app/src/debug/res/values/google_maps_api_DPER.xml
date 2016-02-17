@@ -16,5 +16,5 @@
     string in this file.
     -->
     <!-- clé de DPER -->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAHcawTdcoSkemgJL9Lnk_jzoi-4G6bWvA</string>
+    <!-- <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAHcawTdcoSkemgJL9Lnk_jzoi-4G6bWvA</string> -->
 </resources>
