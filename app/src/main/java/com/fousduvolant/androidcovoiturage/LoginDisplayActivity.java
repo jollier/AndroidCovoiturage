@@ -158,70 +158,70 @@ public class LoginDisplayActivity extends Activity{
      * @author François http://www.francoiscolin.fr/
      */
     //public static User getUser() {
-        public static class ConnexionFiles extends AsyncTask<ContentValues, Integer, User> {
-            public User doInBackground(ContentValues... cValues) {
-                User user = new User();
-                String myurl;
-                myurl= "http://lesfousduvolant.cloudapp.net/Covoiturage/LoginAndroid";
+    public static class ConnexionFiles extends AsyncTask<ContentValues, Integer, User> {
+        public User doInBackground(ContentValues... cValues) {
+            User user = new User();
+            String myurl;
+            myurl= "http://lesfousduvolant.cloudapp.net/Covoiturage/LoginAndroid";
 
-                try {
+            try {
 
-                    URL url = new URL(myurl);
+                URL url = new URL(myurl);
 
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setReadTimeout(10000);
-                    conn.setConnectTimeout(15000);
-                    conn.setRequestMethod("POST");
-                    conn.setDoInput(true);
-                    conn.setDoOutput(true);
-                    //conn.addRequestProperty();
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                //conn.addRequestProperty();
 
                     /*ContentValues values = new ContentValues();
                     values.put("email", "julien.ollier@berger-levrault.fr");
                     values.put("pwd1", "Azerty12");
                     */
 
-                    OutputStream os = conn.getOutputStream();
-                    BufferedWriter writer = new BufferedWriter(
-                            new OutputStreamWriter(os, "UTF-8"));
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
 
-                    StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
+                ContentValues cValue = cValues[0];
 
-                    ContentValues cValue = cValues[0];
-
-                    Set<Map.Entry<String, Object>> s=cValue.valueSet();
-                    Iterator itr = s.iterator();
-                    int i=0;
-                    while(itr.hasNext())
-                    {
-                        if (i>0) {
-                            sb.append("&");
-                        }
-                        i++;
-                        Map.Entry me = (Map.Entry)itr.next();
-                        String key = me.getKey().toString();
-                        String value =  me.getValue().toString();
-
-                        sb.append(URLEncoder.encode(key,"UTF-8")+"="+URLEncoder.encode(value,"UTF-8"));
+                Set<Map.Entry<String, Object>> s=cValue.valueSet();
+                Iterator itr = s.iterator();
+                int i=0;
+                while(itr.hasNext())
+                {
+                    if (i>0) {
+                        sb.append("&");
                     }
+                    i++;
+                    Map.Entry me = (Map.Entry)itr.next();
+                    String key = me.getKey().toString();
+                    String value =  me.getValue().toString();
 
-                    writer.write(sb.toString());
-                    writer.flush();
-                    writer.close();
-                    os.close();
+                    sb.append(URLEncoder.encode(key,"UTF-8")+"="+URLEncoder.encode(value,"UTF-8"));
+                }
 
-                    conn.connect();
 
-                    int responseCode = conn.getResponseCode();
-                    String responseMessage = conn.getResponseMessage();
+                writer.write(sb.toString());
+                writer.flush();
+                writer.close();
+                os.close();
 
-                    InputStream is = null;
-                    if (responseCode != 200) {
-                        is = conn.getErrorStream();
-                        user = null;
-                    } else {
-                        is = conn.getInputStream();
-                    }
+                conn.connect();
+
+                int responseCode = conn.getResponseCode();
+                String responseMessage = conn.getResponseMessage();
+
+                InputStream is = null;
+                if (responseCode != 200) {
+                    is = conn.getErrorStream();
+                    user = null;
+                } else {
+                    is = conn.getInputStream();
+                    
 
                 /*
              * InputStreamOperations est une classe complémentaire:
@@ -232,24 +232,28 @@ public class LoginDisplayActivity extends Activity{
                          * InputStreamOperations est une classe complémentaire:
                          * Elle contient une méthode InputStreamToString.
                          */
-                        String result = InputStreamOperations.InputStreamToString(is);
+                    String result = InputStreamOperations.InputStreamToString(is);
 
-                        // On récupère le JSON complet
-                        JSONObject jsonObject = new JSONObject(result);
+                    // On récupère le JSON complet
+                    JSONObject jsonObject = new JSONObject(result);
 
-                        // On récupère un objet JSON du tableau
-                        //JSONObject obj = new JSONObject(jsonObject.getString("user"));
+                    // On récupère un objet JSON du tableau
+                    //JSONObject obj = new JSONObject(jsonObject.getString("user"));
 
-                        user.setEmail(jsonObject.getString("email"));
 
-                    }
+                    // On récupère un objet JSON du tableau
+                    //JSONObject obj = new JSONObject(jsonObject.getString("user"));
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    user.setEmail(jsonObject.getString("email"));
+
                 }
-                // On retourne le user ou null si le user ne remonte pas
-                return user;
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            // On retourne le user ou null si le user ne remonte pas
+            return user;
+        }
         protected void onProgressUpdate(Integer... progress) {
             //setProgressPercent(progress[0]);
         }
@@ -258,7 +262,6 @@ public class LoginDisplayActivity extends Activity{
             //showDialog("Downloaded " + result + " bytes");
         }
 
-        }
     }
 }
 
