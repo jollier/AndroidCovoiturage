@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">LES FOUS DU VOLANT</string>
-    <string name="title_activity_fous_du_volant">LES FOUS DU VOLANTS</string>
+    <string name="title_activity_fous_du_volant">LES FOUS DU VOLANT</string>
 
     <string name="title_activity_login_display">LES FOUS DU VOLANT</string>
     <string name="create_account">Créer un compte</string>
