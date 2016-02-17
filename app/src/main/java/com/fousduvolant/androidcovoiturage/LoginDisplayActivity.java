@@ -110,6 +110,8 @@ public class LoginDisplayActivity extends Activity{
 
                     if (user!=null) {
                         affichageToast(R.layout.toast_valid,"Connexion réussie ! ");
+                        Intent intent = new Intent(LoginDisplayActivity.this, ListUsersActivity.class);
+                        startActivity(intent);
                     } else {
                         affichageToast(R.layout.toast_erreur,"Erreur : Utilisateur non trouvé ! ");
                     }
