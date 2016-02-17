@@ -80,36 +80,46 @@ public class LoginDisplayActivity extends Activity{
 
             @Override
             public void onClick(View v) {
-                //User user = getUser();
-                ContentValues values = new ContentValues();
-                //values.put("email", "julien.ollier@berger-levrault.fr");
-                //values.put("pwd1", "Azerty12");
-                values.put("email", loginDisplay.getText().toString());
-                values.put("pwd1", passwordDisplay.getText().toString());
 
-                User user = new User();
-                user = null;
-
-                try {
-                    user = new ConnexionFiles().execute(values).get();
-                    //user = connect.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-                if (user!=null) {
-                    affichageToast(R.layout.toast_valid,"Connexion réussie ! ");
+                // Test que les champs soient saisis
+                if (loginDisplay.getText().length()==0) {
+                    loginDisplay.requestFocus();
+                    loginDisplay.setError("Vous devez renseigner ce champs");
+                } else if (passwordDisplay.getText().length()==0) {
+                    passwordDisplay.requestFocus();
+                    passwordDisplay.setError("Vous devez renseigner ce champs");
                 } else {
-                    affichageToast(R.layout.toast_erreur,"Erreur : Utilisateur non trouvé ! ");
+                    //User user = getUser();
+                    ContentValues values = new ContentValues();
+                    //values.put("email", "julien.ollier@berger-levrault.fr");
+                    //values.put("pwd1", "Azerty12");
+                    values.put("email", loginDisplay.getText().toString());
+                    values.put("pwd1", passwordDisplay.getText().toString());
+
+                    User user = new User();
+                    user = null;
+
+                    try {
+                        user = new ConnexionFiles().execute(values).get();
+                        //user = connect.execute().get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (user!=null) {
+                        affichageToast(R.layout.toast_valid,"Connexion réussie ! ");
+                    } else {
+                        affichageToast(R.layout.toast_erreur,"Erreur : Utilisateur non trouvé ! ");
+                    }
+
+                    //Intent intent = new Intent(LoginDisplayActivity.this, TestDatabaseActivity.class);
+                    //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
+                    //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
+
+                    //startActivity(intent);
                 }
-
-                //Intent intent = new Intent(LoginDisplayActivity.this, TestDatabaseActivity.class);
-                //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
-                //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
-
-                //startActivity(intent);
             }
         });
 
