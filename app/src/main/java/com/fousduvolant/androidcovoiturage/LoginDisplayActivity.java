@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,40 +80,46 @@ public class LoginDisplayActivity extends Activity{
 
             @Override
             public void onClick(View v) {
-                //User user = getUser();
-                ContentValues values = new ContentValues();
-                //values.put("email", "julien.ollier@berger-levrault.fr");
-                //values.put("pwd1", "Azerty12");
-                values.put("email", loginDisplay.getText().toString());
-                values.put("pwd1", passwordDisplay.getText().toString());
 
-                User user = new User();
-                user = null;
-
-                try {
-                    user = new ConnexionFiles().execute(values).get();
-                    //user = connect.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                Toast toast = new Toast(getApplicationContext());
-                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                toast.setDuration(Toast.LENGTH_LONG);
-
-
-                if (user!=null) {
-                    Toast.makeText(getApplicationContext(), "Le login est correct", Toast.LENGTH_LONG).show();
+                // Test que les champs soient saisis
+                if (loginDisplay.getText().length()==0) {
+                    loginDisplay.requestFocus();
+                    loginDisplay.setError("Vous devez renseigner ce champs");
+                } else if (passwordDisplay.getText().length()==0) {
+                    passwordDisplay.requestFocus();
+                    passwordDisplay.setError("Vous devez renseigner ce champs");
                 } else {
-                    Toast.makeText(getApplicationContext(), "Le login est incorrect", Toast.LENGTH_LONG).show();
+                    //User user = getUser();
+                    ContentValues values = new ContentValues();
+                    //values.put("email", "julien.ollier@berger-levrault.fr");
+                    //values.put("pwd1", "Azerty12");
+                    values.put("email", loginDisplay.getText().toString());
+                    values.put("pwd1", passwordDisplay.getText().toString());
+
+                    User user = new User();
+                    user = null;
+
+                    try {
+                        user = new ConnexionFiles().execute(values).get();
+                        //user = connect.execute().get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (user!=null) {
+                        affichageToast(R.layout.toast_valid,"Connexion réussie ! ");
+                    } else {
+                        affichageToast(R.layout.toast_erreur,"Erreur : Utilisateur non trouvé ! ");
+                    }
+
+                    //Intent intent = new Intent(LoginDisplayActivity.this, TestDatabaseActivity.class);
+                    //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
+                    //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
+
+                    //startActivity(intent);
                 }
-
-                //Intent intent = new Intent(LoginDisplayActivity.this, TestDatabaseActivity.class);
-                //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
-                //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
-
-                //startActivity(intent);
             }
         });
 
@@ -127,6 +136,21 @@ public class LoginDisplayActivity extends Activity{
                 startActivity(intent);
             }
         });
+    }
+
+    public void affichageToast(int numToast, String message) {
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(numToast, (ViewGroup) findViewById(R.id.custom_toast_layout_id));
+
+        // set a message
+        TextView text = (TextView) layout.findViewById(R.id.text_toast);
+        text.setText(message);
+
+        Toast toast = new Toast(getApplicationContext());
+        //toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
     }
 
     /**
