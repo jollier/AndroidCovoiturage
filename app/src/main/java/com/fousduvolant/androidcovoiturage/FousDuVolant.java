@@ -38,14 +38,14 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -132,7 +132,7 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_connecter) {
-            Intent intent = new Intent(FousDuVolant.this, LoginDisplayActivityAlex.class);
+            Intent intent = new Intent(FousDuVolant.this, LoginDisplayActivity.class);
             //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
             //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
 
@@ -143,6 +143,10 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
             //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
             //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
 
+            startActivity(intent);
+
+        } else if (id == R.id.nav_listuseers) {
+            Intent intent = new Intent(FousDuVolant.this, ListUsersActivity.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_close) {

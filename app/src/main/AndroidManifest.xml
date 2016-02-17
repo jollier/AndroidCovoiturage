@@ -29,8 +29,12 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".LoginDisplayActivity"
+            android:label="@string/title_activity_login_display">
+        </activity>
 
-            android:name=".LoginDisplayActivityAlex"
+        <activity
+            android:name=".ListUsersActivity"
             android:label="@string/title_activity_login_display">
         </activity>
 
