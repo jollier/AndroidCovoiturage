@@ -8,17 +8,19 @@ package com.fousduvolant.androidcovoiturage;
 
         import junit.framework.Test;
 
+        import org.junit.runner.RunWith;
+
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
 
 
-@RunWith(AndroidJUnit4.class)
-public class ApplicationTest extends JunitTestCase<FousDuVolant> {
+
+public class ApplicationTest extends ApplicationTestCase<Application> {
     public static Test suite() {
         return new TestSuiteBuilder(ApplicationTest.class).includeAllPackagesUnderHere().build();
     }
     public ApplicationTest() {
-        super(FousDuVolant.class);
+        super(Application.class);
     }
 }

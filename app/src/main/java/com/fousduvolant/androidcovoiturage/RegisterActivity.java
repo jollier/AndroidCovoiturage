@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -25,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -131,7 +134,7 @@ public class RegisterActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                Boolean resultRequest = true;
+                ArrayList<String> reponse = new ArrayList<String>();
 
                 // Test que les champs soient saisis
                 if (firstNameDisplay.getText().length()==0) {
@@ -146,8 +149,8 @@ public class RegisterActivity extends Activity {
                 } else if (!(passwordDisplay.getText().toString().equals(passwordDisplay2.getText().toString()))) {
                     passwordDisplay2.requestFocus();
                     passwordDisplay2.setError("Mots de passe différents");
-                } else if (validateEmail(passwordDisplay.getText().toString())!=null){
-                    String retour = validateEmail(passwordDisplay.getText().toString());
+                } else if (validatePassword(passwordDisplay.getText().toString())!=null){
+                    String retour = validatePassword(passwordDisplay.getText().toString());
                     passwordDisplay.requestFocus();
                     passwordDisplay.setError(retour);
                 } else if (emailDisplay.getText().toString().isEmpty()) {
@@ -156,48 +159,42 @@ public class RegisterActivity extends Activity {
                 } else if (!emailDisplay.getText().toString().trim().matches("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+")) {
                     emailDisplay.requestFocus();
                     emailDisplay.setError("Vous devez renseigner une adresse mail valide");
-                } else
-                    {
-                        //User user = getUser();
-                        ContentValues values = new ContentValues();
-                        //values.put("email", "julien.ollier@berger-levrault.fr");
-                        //values.put("pwd1", "Azerty12");
-                        values.put("email", emailDisplay.getText().toString());
-                        values.put("pwd1", passwordDisplay.getText().toString());
-                        values.put("firstName", firstNameDisplay.getText().toString());
-                        values.put("lastName", lastNameDisplay.getText().toString());
-                        values.put("addressNumber", addressNumberDisplay.getText().toString());
-                        values.put("addressWay", addressWayDisplay.getText().toString());
-                        values.put("addressCP", addressCPDisplay.getText().toString());
-                        values.put("addressCity", addressCityDisplay.getText().toString());
-                        values.put("phoneNumber", phoneNumberDisplay.getText().toString());
-                        //values.put("sexe", StringsexeDisplay.getText().toString());
-                        values.put("area", areaDisplay.getText().toString());
+                } else {
+                    //User user = getUser();
+                    ContentValues values = new ContentValues();
+                    //values.put("email", "julien.ollier@berger-levrault.fr");
+                    //values.put("pwd1", "Azerty12");
+                    values.put("email", emailDisplay.getText().toString());
+                    values.put("pwd1", passwordDisplay.getText().toString());
+                    values.put("firstName", firstNameDisplay.getText().toString());
+                    values.put("lastName", lastNameDisplay.getText().toString());
+                    values.put("addressNumber", addressNumberDisplay.getText().toString());
+                    values.put("addressWay", addressWayDisplay.getText().toString());
+                    values.put("addressCP", addressCPDisplay.getText().toString());
+                    values.put("addressCity", addressCityDisplay.getText().toString());
+                    values.put("phoneNumber", phoneNumberDisplay.getText().toString());
+                    //values.put("sexe", StringsexeDisplay.getText().toString());
+                    values.put("area", areaDisplay.getText().toString());
 
-                        User user = new User();
-                        user = null;
+                    try {
+                        reponse = new RegisterActivity.ConnexionFiles().execute(values).get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
 
-     //                   try {
-       //                     resultRequest = new RegisterActivity.ConnexionFiles().execute(values).get();
-         //                   //user = connect.execute().get();
-           //             } catch (InterruptedException e) {
-             //               e.printStackTrace();
-               //         } catch (ExecutionException e) {
-                 //           e.printStackTrace();
-                   //     }
-                        Toast toast = new Toast(getApplicationContext());
-                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                        toast.setDuration(Toast.LENGTH_LONG);
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.setDuration(Toast.LENGTH_LONG);
 
 
-                        if (resultRequest) {
-                            Toast.makeText(getApplicationContext(), "Utilisateur créé", Toast.LENGTH_LONG).show();
-                        } else {
-                            //Log.d("Nom", firstNameDisplay.getText().toString());
-                            //Log.d("Sexe", String.valueOf(sexeDisplay));
-                            Toast.makeText(getApplicationContext(), "Erreur de création de l'utilisateur", Toast.LENGTH_LONG).show();
-                        }
-                }
+                    if (reponse.get(0).equals("200")) {
+                        affichageToast(R.layout.toast_valid, reponse.get(1).toString());
+                    } else {
+                        affichageToast(R.layout.toast_erreur, reponse.get(1).toString());
+                    }
+                 }
             }
         });
 
@@ -226,10 +223,10 @@ public class RegisterActivity extends Activity {
      * @author François http://www.francoiscolin.fr/
      */
     //public static User getUser() {
-    public static class ConnexionFiles extends AsyncTask<ContentValues, Integer, Boolean> {
-        public Boolean doInBackground(ContentValues... cValues) {
+    public static class ConnexionFiles extends AsyncTask<ContentValues, Integer, ArrayList<String>> {
+        public ArrayList<String> doInBackground(ContentValues... cValues) {
             User user = new User();
-            Boolean resultRequest = true;
+            ArrayList<String> reponse = new ArrayList<String>();
             String myurl;
             myurl= "http://lesfousduvolant.cloudapp.net/Covoiturage/RegisterAndroid";
 
@@ -284,35 +281,23 @@ public class RegisterActivity extends Activity {
                 int responseCode = conn.getResponseCode();
                 String responseMessage = conn.getResponseMessage();
 
+
                 InputStream is = null;
                 if (responseCode != 200) {
                     is = conn.getErrorStream();
-                    user = null;
-                    resultRequest = false;
-                } else {
-                    resultRequest = true;
+                }else {
                     is = conn.getInputStream();
-                        /*
-                         * InputStreamOperations est une classe complémentaire:
-                         * Elle contient une méthode InputStreamToString.
-                         */
-                    String result = InputStreamOperations.InputStreamToString(is);
-
-                    // On récupère le JSON complet
-                    JSONObject jsonObject = new JSONObject(result);
-
-                    // On récupère un objet JSON du tableau
-                    //JSONObject obj = new JSONObject(jsonObject.getString("user"));
-
-                    user.setEmail(jsonObject.getString("email"));
-
                 }
+                String result = InputStreamOperations.InputStreamToString(is);
+                is.close();
+                reponse.add(""+responseCode);
+                reponse.add(result);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // On retourne le user ou null si le user ne remonte pas
-            return resultRequest;
+            // On retourne un tableau avec le code reponse et le message de reponse
+            return reponse;
         }
         protected void onProgressUpdate(Integer... progress) {
             //setProgressPercent(progress[0]);
@@ -323,8 +308,22 @@ public class RegisterActivity extends Activity {
         }
 
     }
+    public void affichageToast(int numToast, String message) {
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(numToast, (ViewGroup) findViewById(R.id.custom_toast_layout_id));
 
-    public String validateEmail(String password){
+        // set a message
+        TextView text = (TextView) layout.findViewById(R.id.text_toast);
+        text.setText(message);
+
+        Toast toast = new Toast(getApplicationContext());
+        //toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
+    }
+
+    public String validatePassword(String password){
         String retour=null;
 
         boolean hasUppercase = !password.equals(password.toLowerCase());
