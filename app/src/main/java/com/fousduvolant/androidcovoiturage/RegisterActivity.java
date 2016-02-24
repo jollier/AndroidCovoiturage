@@ -137,53 +137,66 @@ public class RegisterActivity extends Activity {
                 if (firstNameDisplay.getText().length()==0) {
                     firstNameDisplay.requestFocus();
                     firstNameDisplay.setError("Vous devez renseigner ce champs");
+                } else if (lastNameDisplay.getText().length()==0){
+                    lastNameDisplay.requestFocus();
+                    lastNameDisplay.setError("Vousdevez renseigner ce champs");
                 } else if (passwordDisplay.getText().length()==0) {
                     passwordDisplay.requestFocus();
                     passwordDisplay.setError("Vous devez renseigner ce champs");
-                //} else if (!(passwordDisplay.getText().equals(passwordDisplay2.getText()))) {
-                    //passwordDisplay.requestFocus();
-                    //passwordDisplay.setError("Mots de passe différents");
-                }else {
+                } else if (!(passwordDisplay.getText().toString().equals(passwordDisplay2.getText().toString()))) {
+                    passwordDisplay2.requestFocus();
+                    passwordDisplay2.setError("Mots de passe différents");
+                } else if (validateEmail(passwordDisplay.getText().toString())!=null){
+                    String retour = validateEmail(passwordDisplay.getText().toString());
+                    passwordDisplay.requestFocus();
+                    passwordDisplay.setError(retour);
+                } else if (emailDisplay.getText().toString().isEmpty()) {
+                    emailDisplay.requestFocus();
+                    emailDisplay.setError("Vous devez renseigner ce champs");
+                } else if (!emailDisplay.getText().toString().trim().matches("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+")) {
+                    emailDisplay.requestFocus();
+                    emailDisplay.setError("Vous devez renseigner une adresse mail valide");
+                } else
+                    {
+                        //User user = getUser();
+                        ContentValues values = new ContentValues();
+                        //values.put("email", "julien.ollier@berger-levrault.fr");
+                        //values.put("pwd1", "Azerty12");
+                        values.put("email", emailDisplay.getText().toString());
+                        values.put("pwd1", passwordDisplay.getText().toString());
+                        values.put("firstName", firstNameDisplay.getText().toString());
+                        values.put("lastName", lastNameDisplay.getText().toString());
+                        values.put("addressNumber", addressNumberDisplay.getText().toString());
+                        values.put("addressWay", addressWayDisplay.getText().toString());
+                        values.put("addressCP", addressCPDisplay.getText().toString());
+                        values.put("addressCity", addressCityDisplay.getText().toString());
+                        values.put("phoneNumber", phoneNumberDisplay.getText().toString());
+                        //values.put("sexe", StringsexeDisplay.getText().toString());
+                        values.put("area", areaDisplay.getText().toString());
 
-                    //User user = getUser();
-                    ContentValues values = new ContentValues();
-                    //values.put("email", "julien.ollier@berger-levrault.fr");
-                    //values.put("pwd1", "Azerty12");
-                    values.put("email", emailDisplay.getText().toString());
-                    values.put("pwd1", passwordDisplay.getText().toString());
-                    values.put("firstName", firstNameDisplay.getText().toString());
-                    values.put("lastName", lastNameDisplay.getText().toString());
-                    values.put("addressNumber", addressNumberDisplay.getText().toString());
-                    values.put("addressWay", addressWayDisplay.getText().toString());
-                    values.put("addressCP", addressCPDisplay.getText().toString());
-                    values.put("addressCity", addressCityDisplay.getText().toString());
-                    values.put("phoneNumber", phoneNumberDisplay.getText().toString());
-                    //values.put("sexe", StringsexeDisplay.getText().toString());
-                    values.put("area", areaDisplay.getText().toString());
+                        User user = new User();
+                        user = null;
 
-                    User user = new User();
-                    user = null;
-
-                    try {
-                        resultRequest = new RegisterActivity.ConnexionFiles().execute(values).get();
-                        //user = connect.execute().get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                    toast.setDuration(Toast.LENGTH_LONG);
+     //                   try {
+       //                     resultRequest = new RegisterActivity.ConnexionFiles().execute(values).get();
+         //                   //user = connect.execute().get();
+           //             } catch (InterruptedException e) {
+             //               e.printStackTrace();
+               //         } catch (ExecutionException e) {
+                 //           e.printStackTrace();
+                   //     }
+                        Toast toast = new Toast(getApplicationContext());
+                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                        toast.setDuration(Toast.LENGTH_LONG);
 
 
-                    if (resultRequest) {
-                        Toast.makeText(getApplicationContext(), "Utilisateur créé", Toast.LENGTH_LONG).show();
-                    } else {
-                        //Log.d("Nom", firstNameDisplay.getText().toString());
-                        //Log.d("Sexe", String.valueOf(sexeDisplay));
-                        Toast.makeText(getApplicationContext(), "Erreur de création de l'utilisateur", Toast.LENGTH_LONG).show();
-                    }
+                        if (resultRequest) {
+                            Toast.makeText(getApplicationContext(), "Utilisateur créé", Toast.LENGTH_LONG).show();
+                        } else {
+                            //Log.d("Nom", firstNameDisplay.getText().toString());
+                            //Log.d("Sexe", String.valueOf(sexeDisplay));
+                            Toast.makeText(getApplicationContext(), "Erreur de création de l'utilisateur", Toast.LENGTH_LONG).show();
+                        }
                 }
             }
         });
@@ -309,6 +322,20 @@ public class RegisterActivity extends Activity {
             //showDialog("Downloaded " + result + " bytes");
         }
 
+    }
+
+    public String validateEmail(String password){
+        String retour=null;
+
+        boolean hasUppercase = !password.equals(password.toLowerCase());
+        boolean hasLowercase = !password.equals(password.toUpperCase());
+        boolean hasNumber = password.matches(".*\\d.*");
+
+        if ((password.length() < 8)|| (!hasUppercase)|| (!hasLowercase) || (!hasNumber)) {
+            retour = "Le mot de passe est incorrect. Il doit contenir au minimum 8 caractères, une majuscule, des minuscules et un chiffre";
+        }
+
+        return retour;
     }
 
 }
