@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +35,7 @@ import service.InputStreamOperations;
  * Created by jollier on 10/02/2016.
  */
 public class RegisterActivity extends Activity {
+
 
     final String EXTRA_EMAIL = "user_email";
     final String EXTRA_PASSWORD = "user_password";
@@ -69,6 +71,7 @@ public class RegisterActivity extends Activity {
     TextView isConducteurDisplay;
     TextView isSmokerDisplay;
     TextView areaDisplay;
+    TextView passwordDisplay2;
 
 
     @Override
@@ -79,6 +82,7 @@ public class RegisterActivity extends Activity {
         Intent intent = getIntent();
         emailDisplay = (TextView) findViewById(R.id.email);
         passwordDisplay = (TextView) findViewById(R.id.password);
+        passwordDisplay2=(TextView) findViewById(R.id.Pwd2);
         firstNameDisplay= (TextView) findViewById(R.id.firstName);
         lastNameDisplay= (TextView) findViewById(R.id.lastName);
         addressNumberDisplay= (TextView) findViewById(R.id.addressNumber);
@@ -86,37 +90,21 @@ public class RegisterActivity extends Activity {
         addressCPDisplay= (TextView) findViewById(R.id.addressCP);
         addressCityDisplay= (TextView) findViewById(R.id.addressCity);
         phoneNumberDisplay= (TextView) findViewById(R.id.phoneNumber);
-        sexeGroup = (RadioGroup)findViewById(R.id.sexe);
-        sexeH = (RadioButton) findViewById(R.id.sexeH);
-        sexeF = (RadioButton) findViewById(R.id.sexeF);
+        //sexeGroup = (RadioGroup)findViewById(R.id.sexe);
+        RadioGroup sexeGroup1 = (RadioGroup) findViewById(R.id.sexe);
+        int selecteId = sexeGroup1.getCheckedRadioButtonId();
+        RadioButton sexeGroup = (RadioButton) findViewById(selecteId);
+ /*       int selecteId = sexeGroup.getCheckedRadioButtonId();
+        sexeDisplay = (TextView)findViewById(selecteId);
+        Log.d("Sexe", String.valueOf(sexeDisplay));  */
+        //sexeH = (RadioButton) findViewById(R.id.sexeH);
+        //sexeF = (RadioButton) findViewById(R.id.sexeF);
       //  isConducteurDisplay= (TextView) findViewById(R.id.isConducteur);
       //  isSmokerDisplay= (TextView) findViewById(R.id.isSmoker);
         areaDisplay= (TextView) findViewById(R.id.area);
 
+      //http://tutorielsandroid.com/les-radio-buttons-dans-android-affichage-et-clics/
 
-        sexeGroup.setOnCheckedChangeListener(sexeGroupListener);
-
-        sexeH.setOnClickListener(radioListener);
-        sexeF.setOnClickListener(radioListener);
-
-//http://tutorielsandroid.com/les-radio-buttons-dans-android-affichage-et-clics/
-        RadioGroup.OnCheckedChangeListener sexeGroupListener = new RadioGroup.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.sexeF) {
-                    Toast.makeText(RegisterActivity.this, "sexeF", Toast.LENGTH_SHORT)
-                            .show();
-                    sexeDisplay.setText("sexeF");
-                }
-                if (checkedId == R.id.sexeH) {
-                    Toast.makeText(RegisterActivity.this, "sexeH", Toast.LENGTH_SHORT)
-                            .show();
-                    sexeDisplay.setText("sexeH");
-                }
-            }
-
-        };
 
         if (intent != null) {
             emailDisplay.setText(intent.getStringExtra(EXTRA_EMAIL));
@@ -128,54 +116,72 @@ public class RegisterActivity extends Activity {
             addressCPDisplay.setText(intent.getStringExtra(EXTRA_ADDRESSCP));
             addressCityDisplay.setText(intent.getStringExtra(EXTRA_ADDRESSCITY));
             phoneNumberDisplay.setText(intent.getStringExtra(EXTRA_PHONENUMBER));
-            // sexeDisplay.setText(intent.getStringExtra(EXTRA_SEXE));
+
+            sexeDisplay = (TextView)findViewById(selecteId);
+            //sexeDisplay.setText(intent.getStringExtra(EXTRA_SEXE));
             //  isConducteurDisplay= (TextView) findViewById(R.id.isConducteur);
             //  isSmokerDisplay= (TextView) findViewById(R.id.isSmoker);
             areaDisplay.setText(intent.getStringExtra(EXTRA_AREA));
         }
-
 
         final Button registerButton = (Button) findViewById(R.id.registerButton);
         registerButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                //User user = getUser();
-                ContentValues values = new ContentValues();
-                //values.put("email", "julien.ollier@berger-levrault.fr");
-                //values.put("pwd1", "Azerty12");
-                values.put("email", emailDisplay.getText().toString());
-                values.put("password", passwordDisplay.getText().toString());
-                values.put("firstName", firstNameDisplay.getText().toString());
-                values.put("lastName", lastNameDisplay.getText().toString());
-                values.put("addressNumber", addressNumberDisplay.getText().toString());
-                values.put("addressWay", addressWayDisplay.getText().toString());
-                values.put("addressCP", addressCPDisplay.getText().toString());
-                values.put("addressCity", addressCityDisplay.getText().toString());
-                values.put("phoneNumber", phoneNumberDisplay.getText().toString());
-                values.put("sexe", sexeDisplay.getText().toString());
-                values.put("area", areaDisplay.getText().toString());
+                Boolean resultRequest = true;
 
-                User user = new User();
-                user = null;
+                // Test que les champs soient saisis
+                if (firstNameDisplay.getText().length()==0) {
+                    firstNameDisplay.requestFocus();
+                    firstNameDisplay.setError("Vous devez renseigner ce champs");
+                } else if (passwordDisplay.getText().length()==0) {
+                    passwordDisplay.requestFocus();
+                    passwordDisplay.setError("Vous devez renseigner ce champs");
+                //} else if (!(passwordDisplay.getText().equals(passwordDisplay2.getText()))) {
+                    //passwordDisplay.requestFocus();
+                    //passwordDisplay.setError("Mots de passe différents");
+                }else {
 
-                try {
-                    user = new LoginDisplayActivity.ConnexionFiles().execute(values).get();
-                    //user = connect.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                Toast toast = new Toast(getApplicationContext());
-                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                toast.setDuration(Toast.LENGTH_LONG);
+                    //User user = getUser();
+                    ContentValues values = new ContentValues();
+                    //values.put("email", "julien.ollier@berger-levrault.fr");
+                    //values.put("pwd1", "Azerty12");
+                    values.put("email", emailDisplay.getText().toString());
+                    values.put("pwd1", passwordDisplay.getText().toString());
+                    values.put("firstName", firstNameDisplay.getText().toString());
+                    values.put("lastName", lastNameDisplay.getText().toString());
+                    values.put("addressNumber", addressNumberDisplay.getText().toString());
+                    values.put("addressWay", addressWayDisplay.getText().toString());
+                    values.put("addressCP", addressCPDisplay.getText().toString());
+                    values.put("addressCity", addressCityDisplay.getText().toString());
+                    values.put("phoneNumber", phoneNumberDisplay.getText().toString());
+                    //values.put("sexe", StringsexeDisplay.getText().toString());
+                    values.put("area", areaDisplay.getText().toString());
+
+                    User user = new User();
+                    user = null;
+
+                    try {
+                        resultRequest = new RegisterActivity.ConnexionFiles().execute(values).get();
+                        //user = connect.execute().get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.setDuration(Toast.LENGTH_LONG);
 
 
-                if (user != null) {
-                    Toast.makeText(getApplicationContext(), "Utilisateur créé", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Erreur de création de l'utilisateur", Toast.LENGTH_LONG).show();
+                    if (resultRequest) {
+                        Toast.makeText(getApplicationContext(), "Utilisateur créé", Toast.LENGTH_LONG).show();
+                    } else {
+                        //Log.d("Nom", firstNameDisplay.getText().toString());
+                        //Log.d("Sexe", String.valueOf(sexeDisplay));
+                        Toast.makeText(getApplicationContext(), "Erreur de création de l'utilisateur", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         });
@@ -203,11 +209,12 @@ public class RegisterActivity extends Activity {
      * @author François http://www.francoiscolin.fr/
      */
     //public static User getUser() {
-    public static class ConnexionFiles extends AsyncTask<ContentValues, Integer, User> {
-        public User doInBackground(ContentValues... cValues) {
+    public static class ConnexionFiles extends AsyncTask<ContentValues, Integer, Boolean> {
+        public Boolean doInBackground(ContentValues... cValues) {
             User user = new User();
+            Boolean resultRequest = true;
             String myurl;
-            myurl= "http://lesfousduvolant.cloudapp.net/Covoiturage/LoginAndroid";
+            myurl= "http://lesfousduvolant.cloudapp.net/Covoiturage/RegisterAndroid";
 
             try {
 
@@ -264,7 +271,9 @@ public class RegisterActivity extends Activity {
                 if (responseCode != 200) {
                     is = conn.getErrorStream();
                     user = null;
+                    resultRequest = false;
                 } else {
+                    resultRequest = true;
                     is = conn.getInputStream();
                         /*
                          * InputStreamOperations est une classe complémentaire:
@@ -286,7 +295,7 @@ public class RegisterActivity extends Activity {
                 e.printStackTrace();
             }
             // On retourne le user ou null si le user ne remonte pas
-            return user;
+            return resultRequest;
         }
         protected void onProgressUpdate(Integer... progress) {
             //setProgressPercent(progress[0]);
@@ -297,7 +306,6 @@ public class RegisterActivity extends Activity {
         }
 
     }
-
 
 }
  
