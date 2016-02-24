@@ -19,7 +19,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:textColor="#0a1bd5"
-        android:textSize="18dp"
+        android:textSize="16dp"
         android:id="@+id/textView2" />
 
     <EditText
@@ -33,7 +33,13 @@
         android:textColor="#0a1bd5"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:layout_alignEnd="@+id/button" />
+        android:textSize="14dp"
+        android:layout_toStartOf="@+id/rayon"
+        android:editable="true"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentBottom="false"
+        android:layout_alignWithParentIfMissing="false" />
 
     <Spinner
         android:layout_width="wrap_content"
@@ -43,7 +49,8 @@
         android:textColor="#0a1bd5"
         android:layout_toEndOf="@+id/button"
         android:spinnerMode="dialog"
-        android:layout_alignTop="@+id/editDepart" />
+        android:layout_alignTop="@+id/editDepart"
+        android:layout_marginLeft="45dp" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -62,16 +69,16 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/button"
         android:layout_alignParentStart="false"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="25dp"
         android:layout_alignParentEnd="false"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="25dp"
         android:id="@+id/relativeLayout">
 
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </RelativeLayout>
 

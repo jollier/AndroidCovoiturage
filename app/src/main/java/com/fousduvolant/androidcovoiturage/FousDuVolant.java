@@ -1,10 +1,12 @@
 package com.fousduvolant.androidcovoiturage;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -32,22 +34,40 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import model.User;
+import service.InputStreamOperations;
 
 public class FousDuVolant extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
@@ -58,6 +78,8 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
     private GoogleMap mMap;
     ArrayList<LatLng> markerPoints;
     Geocoder geocoder = null;
+    Circle adrCircle;
+    List<Address> address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +124,8 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
         // Initializing
         markerPoints = new ArrayList<LatLng>();
         geocoder = new Geocoder(this);
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -110,11 +134,43 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
         btnRechercher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txtAdresse =  (EditText) findViewById(R.id.editDepart);
+                txtAdresse = (EditText) findViewById(R.id.editDepart);
                 if (txtAdresse.getText().length() == 0) {
                     Toast.makeText(FousDuVolant.this, "Veuillez entrer une adresse", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
+
+                        address = geocoder.getFromLocationName(txtAdresse.getText().toString(),5);
+                        Address loc = address.get(0);
+
+                        // Affichage des marqueurs des users
+                        ContentValues values = new ContentValues();
+                        values.put("session", "session");
+                        values.put("area", spinner.getSelectedItem().toString());
+                        values.put("longitude", loc.getLongitude());
+                        values.put("latitude", loc.getLatitude());
+                        ArrayList<User> listeUsers = new ArrayList<User>();
+
+                        try {
+                            listeUsers = new ConnexionFiles().execute(values).get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+
+                        for(int i=0;i < listeUsers.size();i++) {
+                            String nom = listeUsers.get(i).getLastName() + " " + listeUsers.get(i).getFirstName();
+
+                            Double latitude = Double.parseDouble(listeUsers.get(i).getLatitude());
+                            Double longitude = Double.parseDouble(listeUsers.get(i).getLongitude());
+                            LatLng latlon = new LatLng(latitude, longitude);
+                            //ajoutMarker(latlon, nom);
+                            MarkerOptions marker = new MarkerOptions().position(latlon).title(nom);
+                            marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                            mMap.addMarker(marker);
+                        }
+
                         // Ajout du marqueur de l'adresse saisie
                         String adresse = txtAdresse.getText().toString();
                         List<Address> addressList = geocoder.getFromLocationName(adresse, 5);
@@ -125,9 +181,18 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
                         LatLng adrLatLng = new LatLng(location.getLatitude(), location.getLongitude());
                         ajoutMarker(adrLatLng, txtAdresse.getText().toString());
 
+                        // Ajout du cercle par rapport à l'adresse entrée
+                        CircleOptions circleOptions = new CircleOptions()
+                                .center(new LatLng(location.getLatitude(), location.getLongitude()))
+                                .radius(Integer.parseInt(spinner.getSelectedItem().toString()) * 1000)
+                                //.fillColor(0xFF0000)
+                                .fillColor(0x30FF0000)
+                                .strokeColor(Color.RED)
+                                .strokeWidth(1);
+                                //.fillOpacity(0.2));
 
+                        adrCircle = mMap.addCircle(circleOptions);
 
-                        //FousDuVolant.this.startActivity(intent);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -138,15 +203,161 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
     }
 
 
+    /**
+     * Récupère un objet user.
+     * @author François http://www.francoiscolin.fr/
+     */
+    //public static User getUser() {
+    public static class ConnexionFiles extends AsyncTask<ContentValues, Integer, ArrayList<User>> {
+        public ArrayList<User> doInBackground(ContentValues... cValues) {
+            User user = new User();
+            String myurl;
+            myurl = "http://lesfousduvolant.cloudapp.net/Covoiturage/Index";
+            ArrayList<User> myListeUsers = null;
+
+            try {
+                URL url = new URL(myurl);
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+
+                StringBuilder sb = new StringBuilder();
+                ContentValues cValue = cValues[0];
+
+                Set<Map.Entry<String, Object>> s = cValue.valueSet();
+                Iterator itr = s.iterator();
+                int i = 0;
+                while (itr.hasNext()) {
+                    if (i > 0) {
+                        sb.append("&");
+                    }
+                    i++;
+                    Map.Entry me = (Map.Entry) itr.next();
+                    String key = me.getKey().toString();
+                    String value = me.getValue().toString();
+
+                    sb.append(URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8"));
+                }
+
+                writer.write(sb.toString());
+                writer.flush();
+                writer.close();
+                os.close();
+
+                conn.connect();
+                int responseCode = conn.getResponseCode();
+                String responseMessage = conn.getResponseMessage();
+
+                InputStream is = null;
+                if (responseCode != 200) {
+                    is = conn.getErrorStream();
+                    user = null;
+                } else {
+                    is = conn.getInputStream();
+                    /*
+                     * InputStreamOperations est une classe complémentaire:
+                     * Elle contient une méthode InputStreamToString.
+                     */
+                    String result = InputStreamOperations.InputStreamToString(is);
+
+                    JSONArray data = null;
+                    User myUser = null;
+                    JSONObject jsonObject = null;
+                    try {
+                        data = new JSONArray(result);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    myListeUsers = new ArrayList<>();
+                    if (data != null) {
+                        for (int j = 0; j < data.length(); j++) {
+                            try {
+                                jsonObject = data.getJSONObject(j);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                myUser = new User();
+                                myUser.setLastName(jsonObject.getString("lastName"));
+                                myUser.setFirstName(jsonObject.getString("firstName"));
+                                myUser.setLongitude(jsonObject.getString("longitude"));
+                                myUser.setLatitude(jsonObject.getString("latitude"));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            if (myUser != null) {
+                                myListeUsers.add(myUser);
+                            }
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // On retourne les user ou null
+            return myListeUsers;
+        }
+    }
+
+
+
     public void ajoutMarker(LatLng latLng, String nom) {
         MarkerOptions marker = new MarkerOptions().position(latLng).title(nom);
         marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         mMap.addMarker(marker);
 
         CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                new LatLng(latLng.latitude, latLng.longitude)).zoom(11).build();
+                new LatLng(latLng.latitude, latLng.longitude)).zoom(9).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
 
+
+    /**
+     * Method to decode polyline points
+     * Courtesy : http://jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
+     * */
+    private List<LatLng> decodePoly(String encoded) {
+
+        List<LatLng> poly = new ArrayList<LatLng>();
+        int index = 0, len = encoded.length();
+        int lat = 0, lng = 0;
+
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            LatLng p = new LatLng((((double) lat / 1E5)),
+                    (((double) lng / 1E5)));
+            poly.add(p);
+        }
+
+        return poly;
     }
 
     /**
