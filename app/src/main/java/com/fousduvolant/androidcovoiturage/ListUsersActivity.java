@@ -3,11 +3,8 @@ package com.fousduvolant.androidcovoiturage;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -24,12 +21,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import model.User;
+import model.UserList;
 import service.InputStreamOperations;
 
 /**
@@ -41,7 +38,8 @@ public class ListUsersActivity extends Activity{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.list_users_activity_layout);
+        setContentView(R.layout.list_users_activity_layout_listview_main);
+
         Intent intent = getIntent();
 
         myListView = (ListView) findViewById(R.id.listView);
@@ -49,33 +47,38 @@ public class ListUsersActivity extends Activity{
         ContentValues values = new ContentValues();
         values.put("session", "session");
 
-        ArrayList<User> listeUsers = new ArrayList<User>();
+        ArrayList<User> listeServerUsers = new ArrayList<User>();
+        ArrayList<UserList> listeAAfficher = new ArrayList<UserList>();
 
         try {
-            listeUsers = new ListUsersActivity.ConnexionFiles().execute(values).get();
+            listeServerUsers = new ListUsersActivity.ConnexionFiles().execute(values).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
 
-        ArrayList<String> listeAAfficher = new ArrayList<String>();
-        for(int i=0;i < listeUsers.size();i++) {
-            String lastName = listeUsers.get(i).getLastName();
-            String firstName = listeUsers.get(i).getFirstName();
-            String email=listeUsers.get(i).getEmail();
-            String phoneNumber = listeUsers.get(i).getPhoneNumber();
-            listeAAfficher.add(
-                            lastName + " " +
-                            firstName + " " +
-                            email + " " +
-                            phoneNumber
-
-            );
+        for(int i=0;i < listeServerUsers.size();i++) {
+            User user = listeServerUsers.get(i);
+            if (user.getIsConducteur().equalsIgnoreCase("O")) {
+                String lastName = user.getLastName();
+                String firstName = user.getFirstName();
+                String email=user.getEmail();
+                String phoneNumber = user.getPhoneNumber();
+                String address = user.getAddressCP() + " " + user.getAddressCity();
+                listeAAfficher.add(new UserList(lastName + " " + firstName, address));
+            }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(ListUsersActivity.this, android.R.layout.simple_list_item_1, listeAAfficher);
-        myListView.setAdapter(adapter);
+        // 1. pass context and data to the custom adapter
+        ListUsersActivityAdapter adapter = new ListUsersActivityAdapter(this, listeAAfficher);
+
+        //2. setListAdapter
+        ListView listView = (ListView) findViewById(R.id.listView);
+
+        // 3. setListAdapter
+        listView.setAdapter(adapter);
+
     }
 
     /**

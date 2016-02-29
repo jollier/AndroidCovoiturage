@@ -16,11 +16,3 @@ package com.fousduvolant.androidcovoiturage;
 
 
 
-public class ApplicationTest extends ApplicationTestCase<Application> {
-    public static Test suite() {
-        return new TestSuiteBuilder(ApplicationTest.class).includeAllPackagesUnderHere().build();
-    }
-    public ApplicationTest() {
-        super(Application.class);
-    }
-}
