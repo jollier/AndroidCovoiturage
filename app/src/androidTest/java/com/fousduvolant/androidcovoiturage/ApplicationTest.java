@@ -13,12 +13,12 @@ package com.fousduvolant.androidcovoiturage;
  */
 
 
-@RunWith(AndroidJUnit4.class)
-public class ApplicationTest extends JunitTestCase<FousDuVolant> {
-    public static Test suite() {
-        return new TestSuiteBuilder(ApplicationTest.class).includeAllPackagesUnderHere().build();
-    }
-    public ApplicationTest() {
-        super(FousDuVolant.class);
-    }
-}
+//@RunWith(AndroidJUnit4.class)
+//public class ApplicationTest extends JunitTestCase<FousDuVolant> {
+//    public static Test suite() {
+//        return new TestSuiteBuilder(ApplicationTest.class).includeAllPackagesUnderHere().build();
+//    }
+//    public ApplicationTest() {
+//        super(FousDuVolant.class);
+//    }
+//}
