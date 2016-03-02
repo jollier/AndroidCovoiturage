@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,12 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -42,10 +37,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -61,13 +52,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import model.User;
 import service.InputStreamOperations;
+import service.ItineraireTask;
 
 public class FousDuVolant extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
@@ -80,6 +68,8 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
     Geocoder geocoder = null;
     Circle adrCircle;
     List<Address> address;
+    private String depart;
+    private String arrivee;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +129,8 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(FousDuVolant.this, "Veuillez entrer une adresse", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
+                        mMap.clear();
+                        ajoutMarkerBL();
 
                         address = geocoder.getFromLocationName(txtAdresse.getText().toString(),5);
                         Address loc = address.get(0);
@@ -182,16 +174,18 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
                         ajoutMarker(adrLatLng, txtAdresse.getText().toString());
 
                         // Ajout du cercle par rapport à l'adresse entrée
+                        delCircle();  // Suppression du cercle précédent éventuel
                         CircleOptions circleOptions = new CircleOptions()
                                 .center(new LatLng(location.getLatitude(), location.getLongitude()))
                                 .radius(Integer.parseInt(spinner.getSelectedItem().toString()) * 1000)
-                                //.fillColor(0xFF0000)
                                 .fillColor(0x30FF0000)
                                 .strokeColor(Color.RED)
                                 .strokeWidth(1);
-                                //.fillOpacity(0.2));
 
                         adrCircle = mMap.addCircle(circleOptions);
+
+                        // Calcul et affichage de l'itinéraire
+                        itineraire();
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -200,6 +194,20 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+    }
+
+    public void itineraire() {
+        //On récupère le départ et l'arrivée
+        depart = txtAdresse.getText().toString();
+        arrivee = "64 rue Jean Rostand, 31670 LABEGE";
+        //Appel de la méthode asynchrone
+        new ItineraireTask(this, mMap, depart, arrivee).execute();
+    }
+
+    public void delCircle() {
+        if(adrCircle != null) {
+            adrCircle.remove();
+        }
     }
 
 
@@ -321,44 +329,19 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    public void ajoutMarkerBL() {
+        LatLng BL = new LatLng(43.5432556,1.5100196);
+        mMap.addMarker(new MarkerOptions()
+                .position(BL)
+                .title("Berger-Levrault"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(BL));
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
-    /**
-     * Method to decode polyline points
-     * Courtesy : http://jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
-     * */
-    private List<LatLng> decodePoly(String encoded) {
-
-        List<LatLng> poly = new ArrayList<LatLng>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
-
-        while (index < len) {
-            int b, shift = 0, result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lat += dlat;
-
-            shift = 0;
-            result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lng += dlng;
-
-            LatLng p = new LatLng((((double) lat / 1E5)),
-                    (((double) lng / 1E5)));
-            poly.add(p);
-        }
-
-        return poly;
+        CameraPosition cameraPosition = new CameraPosition.Builder() .
+                target(BL).tilt(45).zoom(13).bearing(0).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
+
 
     /**
      * Manipulates the map once available.
@@ -373,19 +356,7 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng BL = new LatLng(43.5432556,1.5100196);
-        mMap.addMarker(new MarkerOptions()
-                .position(BL)
-                .title("Berger-Levrault"));
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(BL));
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-
-        CameraPosition cameraPosition = new CameraPosition.Builder() .
-                target(BL).tilt(45).zoom(13).bearing(0).build();
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
+        ajoutMarkerBL();
     }
 
 
@@ -448,6 +419,7 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_close) {
             // Fermer l'application
             finish();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

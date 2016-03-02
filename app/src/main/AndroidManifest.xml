@@ -30,7 +30,8 @@
 
         <activity
             android:name=".LoginDisplayActivity"
-            android:label="@string/title_activity_login_display">
+            android:label="@string/title_activity_login_display"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
@@ -52,7 +53,8 @@
 
         <activity
             android:name=".RegisterActivity"
-            android:label="@string/title_activity_fous_du_volant">
+            android:label="@string/title_activity_fous_du_volant"
+            android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
 

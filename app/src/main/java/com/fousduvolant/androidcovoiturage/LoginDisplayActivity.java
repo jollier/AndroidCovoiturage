@@ -1,42 +1,40 @@
 package com.fousduvolant.androidcovoiturage;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.support.v7.app.AppCompatActivity;
+
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import model.User;
 import service.InputStreamOperations;
@@ -44,7 +42,7 @@ import service.InputStreamOperations;
 /**
  * Created by jollier on 05/02/2016.
  */
-public class LoginDisplayActivity extends Activity{
+public class LoginDisplayActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     final String EXTRA_LOGIN = "user_login";
     final String EXTRA_PASSWORD = "user_password";
 
@@ -77,7 +75,20 @@ public class LoginDisplayActivity extends Activity{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_layout);
+        setContentView(R.layout.activity_login);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view2);
+        navigationView.setNavigationItemSelectedListener(this);
+
 
         Intent intent = getIntent();
         loginDisplay = (TextView) findViewById(R.id.email);
@@ -277,5 +288,58 @@ public class LoginDisplayActivity extends Activity{
         toast.show();
     }
 
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_connecter) {
+            Intent intent = new Intent(LoginDisplayActivity.this, FousDuVolant.class);
+            //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
+            //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
+
+            startActivity(intent);
+
+        } else if (id == R.id.nav_inscrire) {
+            Intent intent = new Intent(LoginDisplayActivity.this, RegisterActivity.class);
+            //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
+            //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
+
+            startActivity(intent);
+
+        } else if (id == R.id.nav_listuseers) {
+            Intent intent = new Intent(LoginDisplayActivity.this, ListUsersActivity.class);
+            startActivity(intent);
+
+        } else if (id == R.id.nav_close) {
+            // Fermer l'application
+            finish();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+
+    }
 }
 
