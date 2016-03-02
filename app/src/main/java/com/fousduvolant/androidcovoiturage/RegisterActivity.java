@@ -3,6 +3,8 @@ package com.fousduvolant.androidcovoiturage;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -14,14 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -30,6 +36,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -76,6 +83,10 @@ public class RegisterActivity extends Activity {
     TextView areaDisplay;
     TextView passwordDisplay2;
 
+    List<Address> address;
+    Geocoder geocoder = null;
+    String txtAdresse="";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -117,6 +128,9 @@ public class RegisterActivity extends Activity {
             areaDisplay.setText(intent.getStringExtra(EXTRA_AREA));
         }
 
+
+        geocoder = new Geocoder(this);
+
         final Button registerButton = (Button) findViewById(R.id.registerButton);
         registerButton.setOnClickListener(new View.OnClickListener() {
 
@@ -140,13 +154,31 @@ public class RegisterActivity extends Activity {
                     isconducteurDisplay="Non";
                 }
 
+                txtAdresse= txtAdresse.concat(addressNumberDisplay.getText().toString())
+                        .concat(addressWayDisplay.getText().toString())
+                                .concat(addressCPDisplay.getText().toString())
+                                .concat(addressCityDisplay.getText().toString());
+
+
+
+                try {
+                    address = geocoder.getFromLocationName(txtAdresse,5);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Address location = address.get(0);
+                final double latitude = location.getLatitude();
+                final double longitude = location.getLongitude();
+
+
+
                 // Test que les champs soient saisis
                 if (firstNameDisplay.getText().length()==0) {
                     firstNameDisplay.requestFocus();
-                    firstNameDisplay.setError("Vous devez renseigner ce champs");
+                    firstNameDisplay.setError("Vous devez renseigner ce champs"+txtAdresse);
                 } else if (lastNameDisplay.getText().length()==0){
                     lastNameDisplay.requestFocus();
-                    lastNameDisplay.setError("Vousdevez renseigner ce champs");
+                    lastNameDisplay.setError("Vou sdevez renseigner ce champs");
                 } else if (passwordDisplay.getText().length()==0) {
                     passwordDisplay.requestFocus();
                     passwordDisplay.setError("Vous devez renseigner ce champs");
@@ -177,6 +209,8 @@ public class RegisterActivity extends Activity {
                     values.put("addressWay", addressWayDisplay.getText().toString());
                     values.put("addressCp", addressCPDisplay.getText().toString());
                     values.put("addressCity", addressCityDisplay.getText().toString());
+                    values.put("longitude", String.valueOf(longitude));
+                    values.put("latitude", String.valueOf(latitude));
                     values.put("phoneNumber", phoneNumberDisplay.getText().toString());
                     values.put("sexe", sexeDisplay);
                     values.put("isConducteur",isconducteurDisplay);
@@ -202,7 +236,12 @@ public class RegisterActivity extends Activity {
                         affichageToast(R.layout.toast_erreur, reponse.get(1).toString());
                     }
                 }
+
+                Intent intent = new Intent(RegisterActivity.this, LoginDisplayActivity.class);
+                startActivity(intent);
+                finish();
             }
+
         });
 
 
@@ -214,10 +253,10 @@ public class RegisterActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(RegisterActivity.this, LoginDisplayActivity.class);
+                Intent intent = new Intent(RegisterActivity.this, LoginDisplayActivity.class);
                 //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
                 //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
-                //startActivity(intent);
+                startActivity(intent);
                 finish();
             }
         });
