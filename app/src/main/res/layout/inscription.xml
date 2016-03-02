@@ -154,7 +154,7 @@
         android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:id="@+id/addressCP"
+        android:id="@+id/addressCp"
         android:layout_row="31"
         android:layout_column="1"/>
 

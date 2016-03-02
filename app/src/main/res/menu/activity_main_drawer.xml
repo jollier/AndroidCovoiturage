@@ -5,15 +5,24 @@
         <item
             android:id="@+id/nav_connecter"
             android:icon="@drawable/ic_add_24dp"
-            android:title="Se connecter" />
+            android:title="Se connecter"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_inscrire"
             android:icon="@drawable/ic_create_24dp"
-            android:title="S'inscrire" />
+            android:title="S'inscrire"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_listuseers"
             android:icon="@drawable/ic_create_24dp"
-            android:title="Liste des Users" />
+            android:title="Liste des Users"
+            android:visible="false"/>
+
+        <item
+            android:id="@+id/nav_modifuser"
+            android:icon="@drawable/ic_person_24dp"
+            android:title="Profil"
+            android:visible="false"/>
 
     </group>
 

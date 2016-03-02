@@ -38,8 +38,10 @@ import java.util.Map;
 import java.util.Set;
 
 import model.User;
+import model.UserConnect;
 import service.InputStreamOperations;
 
+import service.Constantes;
 /**
  * Created by jollier on 05/02/2016.
  */
@@ -57,12 +59,12 @@ public class LoginDisplayActivity extends AppCompatActivity implements Navigatio
         public boolean handleMessage(final Message msg) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Log.d("EPITEZ", "handleMessage receivedUser setted" + msg.arg1);
+                    Log.d("EDD", "handleMessage receivedUser setted" + msg.arg1);
                     if (receivedUser == null) {
-                        Log.i("EPITEZ", "aucun utilisateur reçu");
+                        Log.i("EDD", "aucun utilisateur reçu");
                         affichageToast(R.layout.toast_erreur, "Erreur : Utilisateur non trouvé ! ");
                     } else {
-                        Log.i("EPITEZ", "reçu " + receivedUser.getEmail());
+                        Log.i("EDD", "reçu " + receivedUser.getEmail());
                         affichageToast(R.layout.toast_valid,"Connexion réussie ! ");
                         Intent intent = new Intent(LoginDisplayActivity.this, ListUsersActivity.class);
                         startActivity(intent);
@@ -89,6 +91,7 @@ public class LoginDisplayActivity extends AppCompatActivity implements Navigatio
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view2);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().findItem(R.id.nav_inscrire).setVisible(true);
 
 
         Intent intent = getIntent();
@@ -153,11 +156,11 @@ public class LoginDisplayActivity extends AppCompatActivity implements Navigatio
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginDisplayActivity.this, FousDuVolant.class);
+                //Intent intent = new Intent(LoginDisplayActivity.this, FousDuVolant.class);
                 //intent.putExtra(EXTRA_LOGIN, loginDisplay.getText().toString());
                 //intent.putExtra(EXTRA_PASSWORD, pass.getText().toString());
 
-                startActivity(intent);
+                finish();
             }
         });
     }
@@ -239,10 +242,10 @@ public class LoginDisplayActivity extends AppCompatActivity implements Navigatio
                     is = conn.getInputStream();
                     
 
-                /*
-             * InputStreamOperations est une classe complémentaire:
-             * Elle contient une méthode InputStreamToString.
-             */
+                        /*
+                     * InputStreamOperations est une classe complémentaire:
+                     * Elle contient une méthode InputStreamToString.
+                     */
 
                         /*
                          * InputStreamOperations est une classe complémentaire:
@@ -260,8 +263,21 @@ public class LoginDisplayActivity extends AppCompatActivity implements Navigatio
                     // On récupère un objet JSON du tableau
                     //JSONObject obj = new JSONObject(jsonObject.getString("user"));
 
-                    user.setEmail(jsonObject.getString("email"));
+                    user.setEmail(jsonObject.getString(Constantes.FIELD_EMAIL));
+                    user.setPassword("");
+                    user.setAddressNumber(jsonObject.getString(Constantes.FIELD_ADDRESSNUMBER));
+                    user.setAddressWay(jsonObject.getString(Constantes.FIELD_ADDRESSWAY));
+                    user.setAddressCp(jsonObject.getString(Constantes.FIELD_ADDRESSCP));
+                    user.setAddressCity(jsonObject.getString(Constantes.FIELD_ADDRESSCITY));
+                    user.setLastName(jsonObject.getString(Constantes.FIELD_LASTNAME));
+                    user.setFirstName(jsonObject.getString(Constantes.FIELD_FIRSTNAME));
+                    user.setArea(jsonObject.getString(Constantes.FIELD_AREA));
+                    user.setIsConducteur(jsonObject.getString(Constantes.FIELD_ISCONDUCTEUR));
+                    user.setIsSmoker(jsonObject.getString(Constantes.FIELD_ISSMOKER));
+                    user.setPhoneNumber(jsonObject.getString(Constantes.FIELD_PHONENUMBER));
+                    user.setSexe(jsonObject.getString(Constantes.FIELD_SEXE));
 
+                    UserConnect.setUser(user);
                 }
 
             } catch (Exception e) {

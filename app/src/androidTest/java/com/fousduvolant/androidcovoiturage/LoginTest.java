@@ -57,6 +57,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginDisplayActi
         });
         getInstrumentation().waitForIdleSync();
         getInstrumentation().sendKeySync(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_ENTER));
+        getInstrumentation().waitForIdleSync();
 
         assertEquals("julien.ollier@berger-levrault.fr", name_edit_text.getText().toString());
     }

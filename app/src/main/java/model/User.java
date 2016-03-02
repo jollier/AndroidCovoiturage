@@ -10,7 +10,7 @@ public class User {
     private  String email="";
     private  String addressNumber="";
     private  String addressWay="";
-    private  String addressCP="";
+    private  String addressCp ="";
     private  String addressCity="";
     private  String longitude="";
     private  String latitude="";
@@ -57,11 +57,11 @@ public class User {
         this.addressWay = addressWay;
     }
 
-    public String getAddressCP() {
-        return addressCP;
+    public String getAddressCp() {
+        return addressCp;
     }
-    public void setAddressCP(String addressCP) {
-        this.addressCP = addressCP;
+    public void setAddressCp(String addressCp) {
+        this.addressCp = addressCp;
     }
 
     public String getAddressCity() {
