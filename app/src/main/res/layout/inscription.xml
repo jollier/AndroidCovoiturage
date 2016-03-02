@@ -83,7 +83,7 @@
         android:layout_width="438dp"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:id="@+id/firstName"
+        android:id="@+id/lastName"
         android:layout_row="23"
         android:layout_column="1"/>
 
@@ -94,7 +94,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Prénom *"
-        android:id="@+id/textLastName"
+        android:id="@+id/textFirstName"
         android:layout_row="25"
         android:layout_column="0" />
 
@@ -102,7 +102,7 @@
         android:layout_width="438dp"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:id="@+id/lastName"
+        android:id="@+id/firstName"
         android:layout_row="25"
         android:layout_column="1"/>
 
@@ -205,26 +205,21 @@
         android:layout_row="37"
         android:nestedScrollingEnabled="false" />
 
-    <RadioGroup
-        android:id="@+id/sexe"
-        android:layout_width="257dp"
-        android:layout_height="wrap_content"
-        android:layout_column="1"
-        android:layout_row="37">
-
-        <RadioButton
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Homme"
             android:id="@+id/sexeH"
-            android:nestedScrollingEnabled="false" />
+            android:layout_row="37"
+            android:layout_column="1" />
 
-        <RadioButton
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Femme"
-            android:id="@+id/sexeF" />
-    </RadioGroup>
+            android:id="@+id/sexeF"
+            android:layout_column="1"/>
+
 
     <!-- Fumeur -->
     <TextView
@@ -235,25 +230,23 @@
         android:id="@+id/smoker"
         android:layout_column="0"
         android:layout_row="39"/>
-
-    <RadioGroup
-        android:layout_width="257dp"
-        android:layout_height="wrap_content"
-        android:layout_column="1"
-        android:layout_row="39">
-
-        <RadioButton
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Oui"
-            android:id="@+id/smokeOk" />
+            android:id="@+id/smokeOk"
+            android:checked="false"
+            android:layout_column="1"
+            android:layout_row="39"/>
 
-        <RadioButton
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Non"
-            android:id="@+id/smokeNOK" />
-    </RadioGroup>
+            android:id="@+id/smokeNok"
+            android:checked="false"
+            android:layout_column="1"/>
+
 
     <!-- Conducteur -->
     <TextView
@@ -265,24 +258,21 @@
         android:layout_column="0"
         android:layout_row="41"/>
 
-    <RadioGroup
-        android:layout_width="257dp"
-        android:layout_height="wrap_content"
-        android:layout_column="1"
-        android:layout_row="41">
 
-        <RadioButton
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Oui"
-            android:id="@+id/driverY" />
+            android:id="@+id/driverY"
+            android:layout_column="1"/>
 
-        <RadioButton
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Non"
-            android:id="@+id/DriverN" />
-    </RadioGroup>
+            android:id="@+id/driverN"
+            android:layout_row="41"
+            android:layout_column="1"/>
 
     <!-- Rayon -->
     <TextView
