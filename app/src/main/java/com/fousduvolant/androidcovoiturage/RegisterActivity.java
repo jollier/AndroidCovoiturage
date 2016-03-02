@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -69,11 +70,9 @@ public class RegisterActivity extends Activity {
     TextView longitudeDisplay;
     TextView latitudeDisplay;
     TextView phoneNumberDisplay;
-    TextView sexeDisplay;
-    RadioGroup sexeGroup;
-    RadioButton sexeH,sexeF;
-    TextView isConducteurDisplay;
-    TextView isSmokerDisplay;
+    String sexeDisplay;
+    String isconducteurDisplay;
+    String issmokerDisplay;
     TextView areaDisplay;
     TextView passwordDisplay2;
 
@@ -87,28 +86,19 @@ public class RegisterActivity extends Activity {
         Intent intent = getIntent();
         emailDisplay = (TextView) findViewById(R.id.email);
         passwordDisplay = (TextView) findViewById(R.id.password);
-        passwordDisplay2=(TextView) findViewById(R.id.Pwd2);
-        firstNameDisplay= (TextView) findViewById(R.id.firstName);
-        lastNameDisplay= (TextView) findViewById(R.id.lastName);
-        addressNumberDisplay= (TextView) findViewById(R.id.addressNumber);
-        addressWayDisplay= (TextView) findViewById(R.id.addressWay);
-        addressCPDisplay= (TextView) findViewById(R.id.addressCP);
-        addressCityDisplay= (TextView) findViewById(R.id.addressCity);
-        phoneNumberDisplay= (TextView) findViewById(R.id.phoneNumber);
-        //sexeGroup = (RadioGroup)findViewById(R.id.sexe);
-        RadioGroup sexeGroup1 = (RadioGroup) findViewById(R.id.sexe);
-        int selecteId = sexeGroup1.getCheckedRadioButtonId();
-        RadioButton sexeGroup = (RadioButton) findViewById(selecteId);
- /*       int selecteId = sexeGroup.getCheckedRadioButtonId();
-        sexeDisplay = (TextView)findViewById(selecteId);
-        Log.d("Sexe", String.valueOf(sexeDisplay));  */
-        //sexeH = (RadioButton) findViewById(R.id.sexeH);
-        //sexeF = (RadioButton) findViewById(R.id.sexeF);
-      //  isConducteurDisplay= (TextView) findViewById(R.id.isConducteur);
-      //  isSmokerDisplay= (TextView) findViewById(R.id.isSmoker);
+        passwordDisplay2 = (TextView) findViewById(R.id.Pwd2);
+        firstNameDisplay = (TextView) findViewById(R.id.firstName);
+        lastNameDisplay = (TextView) findViewById(R.id.lastName);
+        addressNumberDisplay = (TextView) findViewById(R.id.addressNumber);
+        addressWayDisplay = (TextView) findViewById(R.id.addressWay);
+        addressCPDisplay = (TextView) findViewById(R.id.addressCP);
+        addressCityDisplay = (TextView) findViewById(R.id.addressCity);
+        phoneNumberDisplay = (TextView) findViewById(R.id.phoneNumber);
+        final CheckBox homme = (CheckBox) findViewById(R.id.sexeH);
+        final CheckBox smoker =(CheckBox)findViewById(R.id.smokeOk);
+        final CheckBox driver = (CheckBox) findViewById(R.id.driverY);
         areaDisplay= (TextView) findViewById(R.id.area);
 
-      //http://tutorielsandroid.com/les-radio-buttons-dans-android-affichage-et-clics/
 
 
         if (intent != null) {
@@ -121,11 +111,9 @@ public class RegisterActivity extends Activity {
             addressCPDisplay.setText(intent.getStringExtra(EXTRA_ADDRESSCP));
             addressCityDisplay.setText(intent.getStringExtra(EXTRA_ADDRESSCITY));
             phoneNumberDisplay.setText(intent.getStringExtra(EXTRA_PHONENUMBER));
-
-            sexeDisplay = (TextView)findViewById(selecteId);
-            //sexeDisplay.setText(intent.getStringExtra(EXTRA_SEXE));
-            //  isConducteurDisplay= (TextView) findViewById(R.id.isConducteur);
-            //  isSmokerDisplay= (TextView) findViewById(R.id.isSmoker);
+            intent.putExtra(EXTRA_SEXE,sexeDisplay);
+            intent.putExtra(EXTRA_ISCONDUCTEUR,isconducteurDisplay);
+            intent.putExtra(EXTRA_ISSMOKER,issmokerDisplay);
             areaDisplay.setText(intent.getStringExtra(EXTRA_AREA));
         }
 
@@ -135,6 +123,22 @@ public class RegisterActivity extends Activity {
             @Override
             public void onClick(View v) {
                 ArrayList<String> reponse = new ArrayList<String>();
+
+                if (homme.isChecked()) {
+                    sexeDisplay="H";
+                }else {
+                    sexeDisplay ="F";
+                }
+                if (smoker.isChecked()){
+                    issmokerDisplay = "Oui";
+                }else {
+                    issmokerDisplay = "Non";
+                }
+                if (driver.isChecked()){
+                    isconducteurDisplay ="Oui";
+                }else {
+                    isconducteurDisplay="Non";
+                }
 
                 // Test que les champs soient saisis
                 if (firstNameDisplay.getText().length()==0) {
@@ -156,27 +160,30 @@ public class RegisterActivity extends Activity {
                 } else if (emailDisplay.getText().toString().isEmpty()) {
                     emailDisplay.requestFocus();
                     emailDisplay.setError("Vous devez renseigner ce champs");
-                } else if (!emailDisplay.getText().toString().trim().matches("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+")) {
+                } else if (!emailDisplay.getText().toString().trim().matches("([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)")) {
                     emailDisplay.requestFocus();
                     emailDisplay.setError("Vous devez renseigner une adresse mail valide");
-                } else {
+                }
+                else {
                     //User user = getUser();
                     ContentValues values = new ContentValues();
                     //values.put("email", "julien.ollier@berger-levrault.fr");
                     //values.put("pwd1", "Azerty12");
                     values.put("email", emailDisplay.getText().toString());
                     values.put("pwd1", passwordDisplay.getText().toString());
-                    values.put("firstName", firstNameDisplay.getText().toString());
                     values.put("lastName", lastNameDisplay.getText().toString());
+                    values.put("firstName", firstNameDisplay.getText().toString());
                     values.put("addressNumber", addressNumberDisplay.getText().toString());
                     values.put("addressWay", addressWayDisplay.getText().toString());
-                    values.put("addressCP", addressCPDisplay.getText().toString());
+                    values.put("addressCp", addressCPDisplay.getText().toString());
                     values.put("addressCity", addressCityDisplay.getText().toString());
                     values.put("phoneNumber", phoneNumberDisplay.getText().toString());
-                    //values.put("sexe", StringsexeDisplay.getText().toString());
+                    values.put("sexe", sexeDisplay);
+                    values.put("isConducteur",isconducteurDisplay);
+                    values.put("isSmoker",issmokerDisplay);
                     values.put("area", areaDisplay.getText().toString());
 
-                    try {
+                   try {
                         reponse = new RegisterActivity.ConnexionFiles().execute(values).get();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -194,7 +201,7 @@ public class RegisterActivity extends Activity {
                     } else {
                         affichageToast(R.layout.toast_erreur, reponse.get(1).toString());
                     }
-                 }
+                }
             }
         });
 
@@ -219,8 +226,8 @@ public class RegisterActivity extends Activity {
 /********************************************************************************************/
 
     /**
-     * Récupère un objet user.
-     * @author François http://www.francoiscolin.fr/
+     * RÃ©cupÃ¨re un objet user.
+     * @author FranÃ§ois http://www.francoiscolin.fr/
      */
     //public static User getUser() {
     public static class ConnexionFiles extends AsyncTask<ContentValues, Integer, ArrayList<String>> {
