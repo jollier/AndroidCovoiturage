@@ -1,11 +1,9 @@
 package com.fousduvolant.androidcovoiturage;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +37,7 @@ import java.util.concurrent.ExecutionException;
 
 import model.User;
 import model.UserList;
+import service.Constantes;
 import service.InputStreamOperations;
 
 /**
@@ -81,7 +80,7 @@ public class ListUsersActivity extends AppCompatActivity implements OnMapReadyCa
                 String firstName = user.getFirstName();
                 String email=user.getEmail();
                 String phoneNumber = user.getPhoneNumber();
-                String address = user.getAddressCP() + " " + user.getAddressCity();
+                String address = user.getAddressCp() + " " + user.getAddressCity();
                 listeAAfficher.add(new UserList(lastName + " " + firstName, address));
             }
         }
@@ -195,19 +194,19 @@ public class ListUsersActivity extends AppCompatActivity implements OnMapReadyCa
                             }
                             try {
                                 myUser = new User();
-                                myUser.setLastName(jsonObject.getString("lastName"));
-                                myUser.setFirstName(jsonObject.getString("firstName"));
-                                myUser.setEmail(jsonObject.getString("email"));
-                                myUser.setAddressNumber(jsonObject.getString("addressNumber"));
-                                myUser.setAddressWay(jsonObject.getString("addressWay"));
-                                myUser.setAddressCP(jsonObject.getString("addressCP"));
-                                myUser.setAddressCity(jsonObject.getString("addressCity"));
-                                myUser.setLongitude(jsonObject.getString("longitude"));
-                                myUser.setLatitude(jsonObject.getString("latitude"));
-                                myUser.setPhoneNumber(jsonObject.getString("phoneNumber"));
-                                myUser.setIsConducteur(jsonObject.getString("isConducteur"));
-                                myUser.setIsSmoker(jsonObject.getString("isSmoker"));
-                                myUser.setArea(jsonObject.getString("area"));
+                                myUser.setLastName(jsonObject.getString(Constantes.FIELD_LASTNAME));
+                                myUser.setFirstName(jsonObject.getString(Constantes.FIELD_FIRSTNAME));
+                                myUser.setEmail(jsonObject.getString(Constantes.FIELD_EMAIL));
+                                myUser.setAddressNumber(jsonObject.getString(Constantes.FIELD_ADDRESSNUMBER));
+                                myUser.setAddressWay(jsonObject.getString(Constantes.FIELD_ADDRESSWAY));
+                                myUser.setAddressCp(jsonObject.getString(Constantes.FIELD_ADDRESSCP));
+                                myUser.setAddressCity(jsonObject.getString(Constantes.FIELD_ADDRESSCITY));
+                                myUser.setLongitude(jsonObject.getString(Constantes.FIELD_LONGITUDE));
+                                myUser.setLatitude(jsonObject.getString(Constantes.FIELD_LATITUDE));
+                                myUser.setPhoneNumber(jsonObject.getString(Constantes.FIELD_PHONENUMBER));
+                                myUser.setIsConducteur(jsonObject.getString(Constantes.FIELD_ISCONDUCTEUR));
+                                myUser.setIsSmoker(jsonObject.getString(Constantes.FIELD_ISSMOKER));
+                                myUser.setArea(jsonObject.getString(Constantes.FIELD_AREA));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

@@ -8,7 +8,6 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.Gravity;
 
 import android.view.LayoutInflater;
@@ -26,6 +25,9 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONObject;
 
+
+
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +44,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import model.User;
+import model.UserConnect;
 import service.InputStreamOperations;
 
 /**
@@ -72,7 +75,7 @@ public class RegisterActivity extends Activity {
     TextView lastNameDisplay;
     TextView addressNumberDisplay;
     TextView addressWayDisplay;
-    TextView addressCPDisplay;
+    TextView addressCpDisplay;
     TextView addressCityDisplay;
     TextView longitudeDisplay;
     TextView latitudeDisplay;
@@ -95,6 +98,7 @@ public class RegisterActivity extends Activity {
 
 /********************************************************************************************/
         Intent intent = getIntent();
+
         emailDisplay = (TextView) findViewById(R.id.email);
         passwordDisplay = (TextView) findViewById(R.id.password);
         passwordDisplay2 = (TextView) findViewById(R.id.Pwd2);
@@ -102,7 +106,7 @@ public class RegisterActivity extends Activity {
         lastNameDisplay = (TextView) findViewById(R.id.lastName);
         addressNumberDisplay = (TextView) findViewById(R.id.addressNumber);
         addressWayDisplay = (TextView) findViewById(R.id.addressWay);
-        addressCPDisplay = (TextView) findViewById(R.id.addressCP);
+        addressCpDisplay = (TextView) findViewById(R.id.addressCp);
         addressCityDisplay = (TextView) findViewById(R.id.addressCity);
         phoneNumberDisplay = (TextView) findViewById(R.id.phoneNumber);
         final CheckBox homme = (CheckBox) findViewById(R.id.sexeH);
@@ -111,21 +115,39 @@ public class RegisterActivity extends Activity {
         areaDisplay= (TextView) findViewById(R.id.area);
 
 
-
         if (intent != null) {
+
+            User user = UserConnect.getUser();
+            if (user!=null) {
+                emailDisplay.setText(user.getEmail());
+                lastNameDisplay.setText(user.getLastName());
+                firstNameDisplay.setText(user.getFirstName());
+                addressNumberDisplay.setText(user.getAddressNumber());
+                addressWayDisplay.setText(user.getAddressWay());
+                addressCpDisplay.setText(user.getAddressCp());
+                addressCityDisplay.setText(user.getAddressCity());
+                phoneNumberDisplay.setText(user.getPhoneNumber());
+                homme.setChecked((user.getSexe().equals("1")));
+                smoker.setChecked((user.getIsSmoker().equals("1")));
+                driver.setChecked((user.getIsConducteur().equals("1")));
+                areaDisplay.setText(user.getArea());
+            }
+            //Bundle extras = intent.getExtras();
+                /*
             emailDisplay.setText(intent.getStringExtra(EXTRA_EMAIL));
             passwordDisplay.setText(intent.getStringExtra(EXTRA_PASSWORD));
             firstNameDisplay.setText(intent.getStringExtra(EXTRA_FIRSTNAME));
             lastNameDisplay.setText(intent.getStringExtra(EXTRA_LASTNAME));
             addressNumberDisplay.setText(intent.getStringExtra(EXTRA_ADDRESSNUMBER));
             addressWayDisplay.setText(intent.getStringExtra(EXTRA_ADDRESSWAY));
-            addressCPDisplay.setText(intent.getStringExtra(EXTRA_ADDRESSCP));
+            addressCpDisplay.setText(intent.getStringExtra(EXTRA_ADDRESSCP));
             addressCityDisplay.setText(intent.getStringExtra(EXTRA_ADDRESSCITY));
             phoneNumberDisplay.setText(intent.getStringExtra(EXTRA_PHONENUMBER));
             intent.putExtra(EXTRA_SEXE,sexeDisplay);
             intent.putExtra(EXTRA_ISCONDUCTEUR,isconducteurDisplay);
             intent.putExtra(EXTRA_ISSMOKER,issmokerDisplay);
             areaDisplay.setText(intent.getStringExtra(EXTRA_AREA));
+            */
         }
 
 
@@ -139,24 +161,25 @@ public class RegisterActivity extends Activity {
                 ArrayList<String> reponse = new ArrayList<String>();
 
                 if (homme.isChecked()) {
-                    sexeDisplay="H";
+                    sexeDisplay="1";
                 }else {
-                    sexeDisplay ="F";
+
+                    sexeDisplay ="2";
                 }
                 if (smoker.isChecked()){
-                    issmokerDisplay = "Oui";
+                    issmokerDisplay = "1";
                 }else {
-                    issmokerDisplay = "Non";
+                    issmokerDisplay = "0";
                 }
                 if (driver.isChecked()){
-                    isconducteurDisplay ="Oui";
+                    isconducteurDisplay ="1";
                 }else {
-                    isconducteurDisplay="Non";
+                    isconducteurDisplay="0";
                 }
 
                 txtAdresse= txtAdresse.concat(addressNumberDisplay.getText().toString())
                         .concat(addressWayDisplay.getText().toString())
-                                .concat(addressCPDisplay.getText().toString())
+                                .concat(addressCpDisplay.getText().toString())
                                 .concat(addressCityDisplay.getText().toString());
 
 
@@ -207,7 +230,7 @@ public class RegisterActivity extends Activity {
                     values.put("firstName", firstNameDisplay.getText().toString());
                     values.put("addressNumber", addressNumberDisplay.getText().toString());
                     values.put("addressWay", addressWayDisplay.getText().toString());
-                    values.put("addressCp", addressCPDisplay.getText().toString());
+                    values.put("addressCp", addressCpDisplay.getText().toString());
                     values.put("addressCity", addressCityDisplay.getText().toString());
                     values.put("longitude", String.valueOf(longitude));
                     values.put("latitude", String.valueOf(latitude));

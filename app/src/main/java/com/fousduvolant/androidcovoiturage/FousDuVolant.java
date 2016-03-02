@@ -54,6 +54,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import model.User;
+import model.UserConnect;
 import service.InputStreamOperations;
 import service.ItineraireTask;
 
@@ -87,6 +88,9 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().findItem(R.id.nav_connecter).setVisible(true);
+        navigationView.getMenu().findItem(R.id.nav_inscrire).setVisible(true);
+
 
         //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
         spinner = (Spinner) findViewById(R.id.rayon);
@@ -373,7 +377,9 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.main, menu);
+
         return true;
     }
 
@@ -414,6 +420,10 @@ public class FousDuVolant extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_listuseers) {
             Intent intent = new Intent(FousDuVolant.this, ListUsersActivity.class);
+            startActivity(intent);
+
+        } else if (id == R.id.nav_modifuser)  {
+            Intent intent = new Intent(FousDuVolant.this, RegisterActivity.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_close) {
