@@ -28,9 +28,11 @@
         android:inputType="textPostalAddress"
         android:ems="10"
         android:id="@+id/editDepart"
+        android:background="@drawable/edit_text_accueil"
         android:layout_below="@+id/textView2"
         android:layout_alignParentStart="true"
         android:textColor="#0a1bd5"
+        android:padding="10dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:textSize="14dp"
@@ -45,12 +47,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/rayon"
+        android:background="@drawable/spinner_accueil"
+        android:padding="10dp"
         android:textAlignment="center"
         android:textColor="#0a1bd5"
         android:layout_toEndOf="@+id/button"
         android:spinnerMode="dialog"
         android:layout_alignTop="@+id/editDepart"
-        android:layout_marginLeft="45dp" />
+        android:layout_marginLeft="15dp" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
